@@ -4,10 +4,10 @@ MODEL (
 );
 
 SELECT
-  'r'||id osm_id, 
-  substr(ref_type,1,1)||ref member_id,
+  'r' || id AS osm_id,
+  SUBSTRING(ref_type, 1, 1) || ref AS member_id,
   ref_role,
-  ref_idx 
+  ref_idx
 FROM (
   SELECT
     r.id,

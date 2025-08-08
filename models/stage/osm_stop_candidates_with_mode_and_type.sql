@@ -4,13 +4,16 @@ MODEL (
 );
 
 SELECT
-  c.* EXCLUDE (ref, local_ref, ref_ifopt, ref_pt_id),
-  COALESCE(ref_ifopt, ref_pt_id) ref,
-  CASE 
-    WHEN NOT ref_ifopt IS NULL THEN 'ref:IFOPT'
-    WHEN NOT ref_pt_id IS NULL THEN 'ref:pt_id'
+  c.*
+  EXCLUDE (ref, local_ref, ref_ifopt, ref_pt_id),
+  COALESCE(ref_ifopt, ref_pt_id) AS ref,
+  CASE
+    WHEN NOT ref_ifopt IS NULL
+    THEN 'ref:IFOPT'
+    WHEN NOT ref_pt_id IS NULL
+    THEN 'ref:pt_id'
     ELSE NULL
-  END ref_key,
+  END AS ref_key,
   CASE
     WHEN bus = TRUE
     THEN CASE WHEN train OR tram OR light_rail OR ferry OR funicular THEN NULL ELSE 'bus' END
@@ -41,16 +44,16 @@ SELECT
     END
   END AS mode,
   CASE
-    WHEN public_transport='station'
+    WHEN public_transport = 'station'
     THEN 'station'
-    WHEN railway IN ('stop','tram_stop') OR public_transport='stop_position'
+    WHEN railway IN ('stop', 'tram_stop') OR public_transport = 'stop_position'
     THEN 'stop'
-    WHEN highway ='bus_stop' OR public_transport='platform'
+    WHEN highway = 'bus_stop' OR public_transport = 'platform'
     THEN 'platform'
-    WHEN railway ='halt'
+    WHEN railway = 'halt'
     THEN 'halt'
     ELSE NULL
-  END "type",
+  END AS "type",
   CASE
     WHEN LENGTH(ref) < 3
     THEN ref
@@ -58,4 +61,4 @@ SELECT
     THEN local_ref
     ELSE REGEXP_EXTRACT(name, ' (\d+$)', 1)
   END AS assumed_platform
-FROM stage.osm_stop_candidates c
+FROM stage.osm_stop_candidates AS c

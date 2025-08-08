@@ -11,7 +11,7 @@ WITH cte AS (
 )
 SELECT
   p.osm_id,
-  p.member_id AS predesessor,
+  p.member_id AS predecessor,
   s.member_id AS successor
 FROM cte AS s
 JOIN cte AS p

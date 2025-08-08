@@ -1,10 +1,10 @@
 MODEL (
   name stage.osm_stop_area,
-  kind VIEW
+  kind FULL
 );
 
 SELECT
-  substr(kind,1,1)||id osm_id,
+  SUBSTRING(kind, 1, 1) || id AS osm_id,
   MAP_EXTRACT_VALUE(tags, 'name') AS "name",
   MAP_EXTRACT_VALUE(tags, 'network') AS network,
   MAP_EXTRACT_VALUE(tags, 'operator') AS "operator",

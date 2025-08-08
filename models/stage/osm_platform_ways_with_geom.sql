@@ -4,7 +4,7 @@ MODEL (
 );
 
 SELECT
-  'w'||id osm_id,
+  'w' || id AS osm_id,
   CASE
     WHEN ST_EQUALS(ST_STARTPOINT(linestring), ST_ENDPOINT(linestring))
     THEN ST_MAKEPOLYGON(linestring)

@@ -5,10 +5,10 @@ MODEL (
 
 SELECT
   *,
-  substr(ref_type,1,1)||ref member_id
+  SUBSTRING(ref_type, 1, 1) || ref AS member_id
 FROM (
   SELECT
-    substr(r.kind,1,1)||r.id osm_id,
+    SUBSTRING(r.kind, 1, 1) || r.id AS osm_id,
     UNNEST(refs) AS ref,
     UNNEST(ref_types) AS ref_type,
     UNNEST(ref_roles) AS ref_role,

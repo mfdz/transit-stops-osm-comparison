@@ -13,6 +13,7 @@ gateways:
       # catalogs: 
       extensions:
         - spatial
+        - zipfs
       # connector_config: 
       # secrets: 
       # token: 

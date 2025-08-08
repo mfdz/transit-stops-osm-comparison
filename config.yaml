@@ -18,6 +18,8 @@ gateways:
       # secrets: 
       # token: 
 
+variables:
+  MAXIMUM_DISTANCE: 400
 
 default_gateway: duckdb
 

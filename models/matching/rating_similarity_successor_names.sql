@@ -79,15 +79,15 @@ SELECT
   GREATEST(osm_succ_transit_succ_similarity, osm_pred_transit_pred_similarity, 0) AS max_stop_sequence_similarity,
   GREATEST(osm_pred_transit_succ_similarity, osm_succ_transit_pred_similarity, 0) AS max_inversed_direction_similarity,
   CASE
-    WHEN max_stop_sequence_similarity > 0.66
+    WHEN max_stop_sequence_similarity > @MINIMUM_SUCCESSOR_SIMILARITY
     AND (
       max_stop_sequence_similarity - max_inversed_direction_similarity
-    ) >= 0.11
+    ) >= @MINIMUM_SUCCESSOR_PREDECESSOR_DISTANCE
     THEN 1.0
-    WHEN max_inversed_direction_similarity > 0.66
+    WHEN max_inversed_direction_similarity > @MINIMUM_SUCCESSOR_SIMILARITY
     AND (
       max_inversed_direction_similarity - max_stop_sequence_similarity
-    ) >= 0.11
+    ) >= @MINIMUM_SUCCESSOR_PREDECESSOR_DISTANCE
     THEN -1.0
     ELSE 0.0
   END AS similarity_successors

@@ -42,7 +42,7 @@ def best_unique_matches(candidates_per_ifopt, matches = [], matched_index = 0, a
                 candidates_per_ifopt[ifopt] = [candidates_per_ifopt[ifopt][0]]
     
     agency_stops_cnt = len(candidates_per_ifopt)
-                    
+             
     if matched_index < agency_stops_cnt:
         ifopt = list(candidates_per_ifopt.keys())[matched_index]
         stop_candidates = candidates_per_ifopt[ifopt]
@@ -97,11 +97,14 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
             first = False    
         collected_time = datetime.now()
         
-        if subset_size < 50:
+        if subset_size < 30:
             # pick best matches
             (rating, matches) = best_unique_matches(candidates)
             matchsets.extend(matches)
         else:
+            # pick best matches per area. Note that this may result in
+            # duplicated osm_id assignments in different areas, which
+            # need to be post processed and may result in unmatched platforms...
             bereiche = {}
             for ifopt_id in candidates:
                 bereich_id = ifopt_id[:ifopt_id.rindex(':')]

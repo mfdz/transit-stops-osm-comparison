@@ -102,9 +102,9 @@ LEFT JOIN route_short_names_per_stop_id AS rsn
   ON rsn.stop_id = q.dhid
 WHERE
   NOT (
-    q.description LIKE '%Zugang%'
-    AND route_short_names IS NULL
-    OR description LIKE '%rsatz%'
+    description IS NOT NULL
+    AND (q.description LIKE '%Zugang%' AND route_short_names IS NULL
+    OR description LIKE '%rsatz%')
   )
 UNION ALL
 SELECT

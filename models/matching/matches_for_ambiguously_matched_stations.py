@@ -17,31 +17,41 @@ def get_total_rating_sum(matches, agency_stops_cnt):
     summed_ratings_of_matched_stops = math.fsum(map(lambda m: m['similarity'], matches))
     return (rating_of_unmatched_stops + summed_ratings_of_matched_stops) / agency_stops_cnt
 
-def best_unique_matches(candidates, agency_stops = [], matches = [], matched_index = 0, already_matched_osm = []):
-    if (len(agency_stops) == 0 ):
-        agency_stops_set = set()
-        cand_count = 0
-        for candidate in candidates:
-            cand_count += len(candidates[candidate])
-            agency_stops_set.add(candidate)
-        agency_stops = list(agency_stops_set)
+def best_unique_matches(candidates_per_ifopt, matches = [], matched_index = 0, already_matched_osm = []):
+    # This function recursively tries to figure out the best matches.
+    # It is a brute force algorithm with O(n!) to solve this https://en.wikipedia.org/wiki/Assignment_problem. 
+    # Instead, e.g. https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.linear_sum_assignment.html
+    # could be used to speed up this calculation
+    # Params:
+    # - candidates: a map with stop_ids as keys and a list of possible match candidates. The list is assumed to be sorted by descending similarity, then osm_id
+    # - agency_stops: an array of stop_ids of already assigned
+    # - match_index: number of already matched stops
+    # - already_matched_osm: a list of already matched osm ids
+    if matched_index == 0:
+        # On first call, initialise 
+        # 1) a set containing all official quays to match,
+        # 2) a map storing all possible candidates per 
+        #
+        # If the number of candidate pairs exceeds MAX_CANDIDATE_COUNT_PER_STOP_BEFORE_ONLY_BEST_PER_QUAY_ARE_CONSIDERED,
+        # Only the best candidates for every stop are retained for further match picking. 
+        cand_count = sum([len(candidates_per_ifopt[ifopt]) for ifopt in candidates_per_ifopt])
+        
         if cand_count > MAX_CANDIDATE_COUNT_PER_STOP_BEFORE_ONLY_BEST_PER_QUAY_ARE_CONSIDERED:
-            for candidate in candidates:
+            for ifopt in candidates_per_ifopt:
                 # retain only best candidate to reduce complexity
-                if candidates[candidate]: 
-                    candidates[candidate].sort(reverse = True, key = lambda row: row['similarity'])
-                    candidates[candidate] = [candidates[candidate][0]]
+                candidates_per_ifopt[ifopt] = [candidates_per_ifopt[ifopt][0]]
+    
+    agency_stops_cnt = len(candidates_per_ifopt)
                     
-    agency_stops_cnt = len(agency_stops)
     if matched_index < agency_stops_cnt:
-        stop_candidates = candidates.get(agency_stops[matched_index])
-        best_rating = 0
-        best_matches = []
-        (best_rating, best_matches) = best_unique_matches(candidates, agency_stops, matches.copy(), matched_index+1, already_matched_osm)
+        ifopt = list(candidates_per_ifopt.keys())[matched_index]
+        stop_candidates = candidates_per_ifopt[ifopt]
+        
+        (best_rating, best_matches) = best_unique_matches(candidates_per_ifopt, matches.copy(), matched_index+1, already_matched_osm)
         for candidate in stop_candidates:
             candidate_id = candidate["osm_id"]
             if not candidate_id in already_matched_osm:
-                (rating, current_matches) = best_unique_matches(candidates, agency_stops, matches.copy()+[candidate], matched_index+1, already_matched_osm+[candidate_id])
+                (rating, current_matches) = best_unique_matches(candidates_per_ifopt, matches.copy()+[candidate], matched_index+1, already_matched_osm+[candidate_id])
                 if rating > best_rating:
                     best_rating = rating
                     best_matches = current_matches
@@ -109,7 +119,7 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
 def test_match(ifopt_prefix = ''):
     con = duckdb.connect('db.db', read_only=True)
     con.load_extension("spatial")
-    rows = con.sql(f"SELECT parent_or_station, globaleid, osm_id, similarity FROM matching.ranked_match_candidates WHERE parent_or_station LIKE '{ifopt_prefix}' AND parent_or_station IN (SELECT * FROM matching.ambiguously_matched_stations) and stop_ranking < 5 ORDER BY parent_or_station,globaleid,osm_id").df()
+    rows = con.sql(f"SELECT parent_or_station, globaleid, osm_id, similarity FROM matching.ranked_match_candidates WHERE parent_or_station LIKE '{ifopt_prefix}' AND parent_or_station IN (SELECT * FROM matching.ambiguously_matched_stations) and stop_ranking < 5 ORDER BY parent_or_station,globaleid,similarity DESC, osm_id").df()
     for matches in match(rows):
         yield (matches)
 
@@ -137,7 +147,7 @@ def execute(
     match_candidates_table = context.resolve_table("matching.ranked_match_candidates")
 
     debug = False
-    query = f"SELECT parent_or_station, globaleid, osm_id, similarity FROM {match_candidates_table} WHERE parent_or_station IN (SELECT * FROM {ambiguously_matched_stations_table}) ORDER BY parent_or_station,globaleid,osm_id {'LIMIT 0' if debug else ''}"
+    query = f"SELECT parent_or_station, globaleid, osm_id, similarity FROM {match_candidates_table} WHERE parent_or_station IN (SELECT * FROM {ambiguously_matched_stations_table}) ORDER BY parent_or_station,globaleid,similarity DESC,osm_id {'LIMIT 0' if debug else ''}"
     
     rows = context.fetchdf(query)
 

@@ -95,13 +95,15 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
                 (rating, matches) = best_unique_matches(bereiche[bereich_id])
                 matchsets.extend(matches)
         matched_time = datetime.now()
-        if ((matched_time-time_start).total_seconds()>10):
+        if ((matched_time-time_start).total_seconds()>3):
             print(rows.iloc[idx-1]["parent_or_station"], matched_time-time_start)
         
-        if matchset_count % 2500 == 0:
+        if matchset_count % 5000 == 0:
             yield pd.DataFrame(matchsets, columns=['parent_or_station','globaleid','osm_id','similarity'])
             matchsets = []
+            print(f'Matched {matchset_count}...')
     yield pd.DataFrame(matchsets, columns=['parent_or_station','globaleid','osm_id','similarity'])
+    print(f'Matched {matchset_count}.')
 
 
 def test_match(ifopt_prefix = ''):

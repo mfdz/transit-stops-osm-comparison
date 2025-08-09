@@ -50,11 +50,18 @@ def best_unique_matches(candidates_per_ifopt, matches = [], matched_index = 0, a
         (best_rating, best_matches) = best_unique_matches(candidates_per_ifopt, matches.copy(), matched_index+1, already_matched_osm)
         for candidate in stop_candidates:
             candidate_id = candidate["osm_id"]
-            if not candidate_id in already_matched_osm:
+            # We allow multiple osm features to match for identity matches
+            if not candidate_id in already_matched_osm or candidate["similarity"]==1.0:
                 (rating, current_matches) = best_unique_matches(candidates_per_ifopt, matches.copy()+[candidate], matched_index+1, already_matched_osm+[candidate_id])
                 if rating > best_rating:
                     best_rating = rating
                     best_matches = current_matches
+            if candidate["similarity"]==1.0:
+                # In case we saw a best match, we won't search further
+                # (Might need to revise if we want to return multiple osm stops for one ifopt, 
+                # e.g. because only stations (and no quays) is known)
+                break
+            
         return (best_rating, best_matches)
     else:
         return (get_total_rating_sum(matches, agency_stops_cnt), matches)

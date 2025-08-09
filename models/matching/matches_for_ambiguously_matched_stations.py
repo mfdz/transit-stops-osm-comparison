@@ -110,7 +110,6 @@ def test_match(ifopt_prefix = ''):
     con = duckdb.connect('db.db', read_only=True)
     con.load_extension("spatial")
     rows = con.sql(f"SELECT parent_or_station, globaleid, osm_id, similarity FROM matching.ranked_match_candidates WHERE parent_or_station IN (SELECT * FROM matching.ambiguously_matched_stations) ORDER BY parent_or_station,globaleid,osm_id").df()
-    print(len(rows))
     for matches in match(rows):
         yield (matches)
 

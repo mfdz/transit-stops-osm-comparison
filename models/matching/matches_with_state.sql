@@ -49,7 +49,7 @@ LEFT JOIN (
     station
   FROM stations_with_at_least_on_match
 ) AS l
-  ON m.parent_or_station = l.station
+  ON t.parent = l.station
 LEFT JOIN (
   SELECT
     globaleid

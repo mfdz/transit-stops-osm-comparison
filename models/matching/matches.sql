@@ -9,14 +9,7 @@ WITH all_matches AS (
     globaleid,
     osm_id,
     similarity
-  FROM matching.ranked_match_candidates AS rmc
-  WHERE
-    NOT rmc.parent_or_station IN (
-      SELECT
-        parent_or_station
-      FROM matching.ambiguously_matched_stations
-    )
-    AND stop_ranking = 1
+  FROM matching.perfect_matches
   UNION ALL
   SELECT
     parent_or_station,

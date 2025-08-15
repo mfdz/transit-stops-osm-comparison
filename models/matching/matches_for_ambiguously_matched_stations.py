@@ -50,17 +50,11 @@ def best_unique_matches(candidates_per_ifopt, matches = [], matched_index = 0, a
         (best_rating, best_matches) = best_unique_matches(candidates_per_ifopt, matches.copy(), matched_index+1, already_matched_osm)
         for candidate in stop_candidates:
             candidate_id = candidate["osm_id"]
-            # We allow multiple osm features to match for identity matches
-            if not candidate_id in already_matched_osm or candidate["similarity"]==1.0:
+            if not candidate_id in already_matched_osm:
                 (rating, current_matches) = best_unique_matches(candidates_per_ifopt, matches.copy()+[candidate], matched_index+1, already_matched_osm+[candidate_id])
                 if rating > best_rating:
                     best_rating = rating
                     best_matches = current_matches
-            if candidate["similarity"]==1.0:
-                # In case we saw a best match, we won't search further
-                # (Might need to revise if we want to return multiple osm stops for one ifopt, 
-                # e.g. because only stations (and no quays) is known)
-                break
             
         return (best_rating, best_matches)
     else:
@@ -81,8 +75,9 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
         candidates = {}
         new_rows = []
         time_start = datetime.now()
-        # Collect all matches for same parent stop (assuming their stop_id have same leading <country>:<district>:<parentid> )
-        while idx < len(rows) and (first or rows.iloc[idx]['parent_or_station'] == rows.iloc[idx-1]['parent_or_station']):
+        # Collect all matches for same parent stop (assuming their stop_id have same leading <country>:<district>:<parentid> ). 
+        # Note: for stations, every candidate will be considered
+        while idx < len(rows) and (first or (not rows.iloc[idx]['globaleid']==rows.iloc[idx]['parent_or_station'] and not rows.iloc[idx-1]['globaleid']==rows.iloc[idx-1]['parent_or_station'] and rows.iloc[idx]['parent_or_station'] == rows.iloc[idx-1]['parent_or_station'])):
         
             new_rows.append(rows.iloc[idx])    
             ifopt_id = rows.iloc[idx]["globaleid"]
@@ -97,7 +92,7 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
             first = False    
         collected_time = datetime.now()
         
-        if subset_size < 30:
+        if subset_size < 40:
             # pick best matches
             (rating, matches) = best_unique_matches(candidates)
             matchsets.extend(matches)
@@ -129,7 +124,7 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
 def test_match(ifopt_prefix = ''):
     con = duckdb.connect('db.db', read_only=True)
     con.load_extension("spatial")
-    rows = con.sql(f"SELECT parent_or_station, globaleid, osm_id, similarity FROM matching.ranked_match_candidates WHERE parent_or_station LIKE '{ifopt_prefix}' AND parent_or_station IN (SELECT * FROM matching.ambiguously_matched_stations) and stop_ranking < 5 ORDER BY parent_or_station,globaleid,similarity DESC, osm_id").df()
+    rows = con.sql(f"SELECT parent_or_station, globaleid, osm_id, similarity FROM matching.imperfect_match_candidates WHERE parent_or_station LIKE '{ifopt_prefix}' and stop_ranking < 5 ORDER BY parent_or_station,globaleid,similarity DESC, osm_id").df()
     for matches in match(rows):
         yield (matches)
 
@@ -153,11 +148,10 @@ def execute(
 ) -> pd.DataFrame:
     logger = logging.getLogger(__name__)
 
-    ambiguously_matched_stations_table = context.resolve_table("matching.ambiguously_matched_stations")
-    match_candidates_table = context.resolve_table("matching.ranked_match_candidates")
+    match_candidates_table = context.resolve_table("matching.imperfect_match_candidates")
 
     debug = False
-    query = f"SELECT parent_or_station, globaleid, osm_id, similarity FROM {match_candidates_table} WHERE parent_or_station IN (SELECT * FROM {ambiguously_matched_stations_table}) ORDER BY parent_or_station,globaleid,similarity DESC,osm_id {'LIMIT 0' if debug else ''}"
+    query = f"SELECT parent_or_station, globaleid, osm_id, similarity FROM {match_candidates_table} ORDER BY parent_or_station,globaleid,similarity DESC,osm_id {'LIMIT 0' if debug else ''}"
     
     rows = context.fetchdf(query)
 

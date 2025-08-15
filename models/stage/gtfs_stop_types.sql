@@ -15,6 +15,8 @@ WITH route_types_per_stop AS (
       THEN 1
       WHEN route_type BETWEEN 900 AND 999
       THEN 0
+      WHEN route_type BETWEEN 1200 AND 1299
+      THEN 4
       WHEN route_type BETWEEN 1000 AND 1099
       THEN 5
       ELSE route_type

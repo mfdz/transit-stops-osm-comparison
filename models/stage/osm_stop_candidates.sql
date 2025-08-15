@@ -56,8 +56,8 @@ FROM (
   SELECT
     pw.*
     EXCLUDE (lat, lon),
-    ST_X(geometry) AS lon,
-    ST_Y(geometry) AS lat,
+    ST_X(geometry) AS lat,
+    ST_Y(geometry) AS lon,
     projected_geometry
   FROM platform_ways AS pw
   JOIN stage.osm_platform_ways_with_centroid AS c
@@ -66,8 +66,8 @@ FROM (
   SELECT
     *
     EXCLUDE (lat, lon),
-    lon,
     lat,
+    lon,
     ST_TRANSFORM(ST_POINT(lat, lon), 'EPSG:4326', 'EPSG:25832') AS projected_geometry
   FROM platform_stops_stations_nodes
 )

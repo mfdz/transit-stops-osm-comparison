@@ -20,4 +20,5 @@ SELECT
 FROM similarity_ranked_match_candidates AS s
 JOIN matching.transit_stops AS t
   ON s.globaleid = t.globaleid
-WHERE stop_ranking < 5
+WHERE
+  stop_ranking < 5

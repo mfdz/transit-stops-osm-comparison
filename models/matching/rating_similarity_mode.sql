@@ -20,10 +20,10 @@ SELECT
     WHEN mode_osm = mode_transit
     THEN 1.0
     WHEN (
-      mode_osm = 'trainish' AND mode_transit IN ('rail', 'light_rail')
+      mode_osm = 'trainish' AND mode_transit IN ('train', 'light_rail')
     )
     OR (
-      mode_transit = 'trainish' AND mode_osm IN ('rail', 'light_rail')
+      mode_transit = 'trainish' AND mode_osm IN ('train', 'light_rail')
     )
     THEN 1.0
     WHEN mode_transit IS NULL

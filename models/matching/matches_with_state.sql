@@ -18,6 +18,7 @@ WITH stations_with_at_least_on_match AS (
 )
 SELECT
   t.*,
+  o.osm_id,
   CASE
     WHEN m.globaleid IS NULL AND t.route_short_names IS NULL
     THEN 'NO_MATCH_AND_SEEMS_UNSERVED'

@@ -1,7 +1,7 @@
 MODEL (
   name matching.match_candidates_in_vicinity,
   kind VIEW,
-  description ""
+  description "All pairs of transit and osm candidates in vicinity (@MAXIMUM_DISTANCE). Obviously contradicting modes are excluded."
 );
 
 SELECT

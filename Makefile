@@ -10,8 +10,19 @@ OSMIUM_UPDATE = docker run -i --rm -v $(HOST_MOUNT)/seeds:$(TOOL_DATA) $(PYOSMIU
 # Read environment variable files, in case they exist
 -include .env .env.local
 
-# Download/Update OSM extracts from Geofabrik
-seeds/data.osm.pbf:
-	$(info downloading/updating OSM extract)
-	OSMIUM_UPDATE="$(OSMIUM_UPDATE) $(TOOL_DATA)/$(@F)" ./scripts/update_osm.sh '$(OSM_DOWNLOAD_URL)' '$@'
 
+.PHONY: download, plan-no-backfill, plan-restate
+
+
+download:
+	# Download/Update OSM extracts from Geofabrik
+	OSMIUM_UPDATE="$(OSMIUM_UPDATE) $(TOOL_DATA)/data.osm.pbf" ./scripts/update_osm.sh '$(OSM_DOWNLOAD_URL)' 'seeds/data.osm.pbf'
+	# Download zHV and GTFS data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
+	./scripts/download.sh $(GTFS_DOWNLOAD_URL) seeds/gtfs.zip || true
+	./scripts/download.sh $(STOP_REGISTRY_DOWNLOAD_URL) seeds/zhv.zip || true
+
+plan-no-backfill:
+	sqlmesh plan --auto-apply --skip-backfill --no-gaps
+
+plan-restate:
+	sqlmesh plan --auto-apply -r 'raw.*'

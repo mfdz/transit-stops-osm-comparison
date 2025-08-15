@@ -31,4 +31,4 @@ SELECT
   EXCLUDE (latitude, longitude),
   REPLACE(latitude, ',', '.')::DOUBLE AS latitude,
   REPLACE(longitude, ',', '.')::DOUBLE AS longitude
-FROM READ_CSV('seeds/zhv.csv')
+FROM READ_CSV('zip://seeds/zhv.zip/zHV_aktuell_csv.*.csv', quote='"', escape='\')

@@ -9,7 +9,7 @@ SELECT
 FROM stage.osm_stop_candidates_with_mode_and_type AS h
 WHERE
   h.type IN ('halt', 'station')
-  AND NOT EXISTS(
+  AND EXISTS(
     SELECT
       1
     FROM stage.osm_stop_candidates_with_mode_and_type AS s

@@ -54,11 +54,11 @@ SELECT
     THEN 'halt'
     ELSE NULL
   END AS "type",
-  CASE
+  NULLIF(TRIM(CASE
     WHEN LENGTH(ref) < 3
     THEN ref
     WHEN LENGTH(local_ref) < 3
     THEN local_ref
     ELSE REGEXP_EXTRACT(name, ' (\d+$)', 1)
-  END AS assumed_platform
+  END), '') AS assumed_platform
 FROM stage.osm_stop_candidates AS c

@@ -87,6 +87,36 @@ SELECT
     THEN 'ferry'
     WHEN gst.route_type = 7
     THEN 'funicular'
+    WHEN quay_name LIKE (
+      '%Tram%'
+    ) OR quay_name LIKE (
+      '%Strab %'
+    )
+    THEN 'tram'
+    WHEN quay_name LIKE (
+      '%Gleis%'
+    )
+    THEN 'trainish'
+    WHEN quay_name LIKE (
+      '%Fähranleger%'
+    )
+    THEN 'ferry'
+    WHEN quay_name LIKE (
+      '%Bus %'
+    )
+    OR quay_name LIKE (
+      '%Fernbus%'
+    )
+    OR quay_name LIKE (
+      '%AST%'
+    )
+    OR quay_name LIKE (
+      '%SEV%'
+    )
+    OR quay_name LIKE (
+      '%Steig%'
+    )
+    THEN 'bus'
     ELSE NULL
   END AS mode,
   route_short_names,
@@ -116,7 +146,21 @@ SELECT
   LTRIM(SUBSTRING(stop_long_name, 1 + STRPOS(stop_long_name, ','))) AS stop_name_without_locality,
   NULL AS assumed_platform,
   1 AS number_of_station_quays,
-  NULL AS mode,
+  CASE
+    WHEN gst.route_type = 3 
+    THEN 'bus'
+    WHEN gst.route_type = 2
+    THEN 'train'
+    WHEN gst.route_type = 0
+    THEN 'tram'
+    WHEN gst.route_type = 1
+    THEN 'light_rail'
+    WHEN gst.route_type = 4
+    THEN 'ferry'
+    WHEN gst.route_type = 7
+    THEN 'funicular'
+    ELSE NULL
+  END AS mode,
   route_short_names,
   ST_TRANSFORM(ST_POINT(latitude, longitude), 'EPSG:4326', 'EPSG:25832') AS projected_geometry
 FROM stations_without_quays AS s
@@ -124,3 +168,5 @@ LEFT JOIN stage.zhv_expanded_names AS e
   ON s.dhid = e.dhid
 LEFT JOIN route_short_names_per_stop_id AS rsn
   ON rsn.stop_id = s.dhid
+LEFT JOIN stage.gtfs_stop_types AS gst
+  ON gst.stop_id = s.dhid

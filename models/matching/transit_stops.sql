@@ -73,7 +73,7 @@ SELECT
   ) AS locality,
   LTRIM(SUBSTRING(stop_long_name, 1 + STRPOS(stop_long_name, ','))) AS stop_name_without_locality,
   TRIM(
-  COALESCE(
+    COALESCE(
       NULLIF(
         REGEXP_EXTRACT(quay_name, '(Gleis |Bus |Bussteig |Steig |Mast |Gl\. ?|^)([A-Z0-9][A-Z0-9]?)$', 2),
         ''
@@ -88,10 +88,10 @@ SELECT
   ) AS assumed_platform,
   n.cnt AS number_of_station_quays,
   CASE
-    WHEN gst.route_type = 3
+    WHEN gst.route_type = 3 
     THEN 'bus'
     WHEN gst.route_type = 2
-    THEN 'rail'
+    THEN 'train'
     WHEN gst.route_type = 0
     THEN 'tram'
     WHEN gst.route_type = 1

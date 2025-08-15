@@ -343,6 +343,8 @@ def execute(
     filtered_df = df.loc[df['expanded_name'] != df['name']]
     del filtered_df['name']
     del filtered_df['municipality']
+    if len(filtered_df)==0:
+        yield from ()
     yield filtered_df
 
 

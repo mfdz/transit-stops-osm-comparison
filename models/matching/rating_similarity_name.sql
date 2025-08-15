@@ -7,10 +7,10 @@ WITH names AS (
   SELECT
     c.globaleid,
     o.osm_id,
-    REPLACE(t.stop_long_name, ',', '') AS stop_long_name,
+    NULLIF(TRIM(REPLACE(REGEXP_REPLACE(REPLACE(t.stop_long_name, ',', ''), '\([\w\.\W]*\)','','g'),'  ',' ')),'') AS stop_long_name,
     t.locality,
-    t.stop_name_without_locality,
-    REPLACE(o.name, ',', '') AS osm_name
+    NULLIF(TRIM(REPLACE(REGEXP_REPLACE(t.stop_name_without_locality, '\([\w\.\W]*\)','','g'),'  ',' ')),'') AS stop_name_without_locality,
+    NULLIF(TRIM(REPLACE(REGEXP_REPLACE(REPLACE(o.name, ',', ''), '\([\w\.\W]*\)','','g'),'  ',' ')),'') AS osm_name
   FROM matching.match_candidates AS c
   JOIN matching.transit_stops AS t
     USING (globaleid)

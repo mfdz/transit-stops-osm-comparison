@@ -67,7 +67,10 @@ SELECT
   q.*
   EXCLUDE (dhid),
   COALESCE(e.expanded_name, q.name) AS stop_long_name,
-  NULLIF(LTRIM(SUBSTRING(stop_long_name, 1, STRPOS(stop_long_name, ',') - 1)), '') AS locality,
+  COALESCE(
+    NULLIF(LTRIM(SUBSTRING(stop_long_name, 1, STRPOS(stop_long_name, ',') - 1)), ''),
+    stop_long_name
+  ) AS locality,
   LTRIM(SUBSTRING(stop_long_name, 1 + STRPOS(stop_long_name, ','))) AS stop_name_without_locality,
   COALESCE(
     NULLIF(REGEXP_EXTRACT(quay_name, '(Gleis |Bus |teig |Mast |^)([A-Z0-9].?)$', 2), ''),
@@ -142,7 +145,10 @@ SELECT
   s.*
   EXCLUDE (dhid),
   COALESCE(e.expanded_name, s.name) AS stop_long_name,
-  NULLIF(LTRIM(SUBSTRING(stop_long_name, 1, STRPOS(stop_long_name, ',') - 1)), '') AS locality,
+  COALESCE(
+    NULLIF(LTRIM(SUBSTRING(stop_long_name, 1, STRPOS(stop_long_name, ',') - 1)), ''),
+    stop_long_name
+  ) AS locality,
   LTRIM(SUBSTRING(stop_long_name, 1 + STRPOS(stop_long_name, ','))) AS stop_name_without_locality,
   NULL AS assumed_platform,
   1 AS number_of_station_quays,

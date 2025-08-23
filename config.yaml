@@ -27,6 +27,8 @@ variables:
   MINIMUM_SUCCESSOR_SIMILARITY: 0.6
   MINIMUM_SUCCESSOR_PREDECESSOR_DISTANCE: 0.11
 
+  TRANSIT_STOPS_SCHEMA: delfi
+
 default_gateway: duckdb
 
 model_defaults:

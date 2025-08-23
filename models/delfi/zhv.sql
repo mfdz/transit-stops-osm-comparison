@@ -1,6 +1,7 @@
 MODEL (
-  name raw.zhv,
+  name delfi.zhv,
   kind FULL,
+  tags delfi,
   columns (
     SeqNo INT,
     Type TEXT,

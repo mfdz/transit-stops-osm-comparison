@@ -321,12 +321,13 @@ def extract_stop_name(original_name, municipality, dhid):
     return replaced_name
 
 @model(
-    "stage.zhv_expanded_names",
+    "delfi.zhv_expanded_names",
     columns={
         "dhid": "text",
         "expanded_name": "text",
     },
     cron='@weekly',
+    tags=['delfi'],
     kind="FULL"
 )
 def execute(
@@ -336,7 +337,7 @@ def execute(
     execution_time: datetime,
     **kwargs: t.Any,
 ) -> pd.DataFrame:
-    table = context.resolve_table("raw.zhv")
+    table = context.resolve_table("delfi.zhv")
     df = context.fetchdf(f"SELECT dhid, name, municipality FROM {table} WHERE type='S'")
     df['expanded_name'] = df.apply(lambda x: extract_stop_name(x['name'], x['municipality'], x['dhid']), axis=1)
     

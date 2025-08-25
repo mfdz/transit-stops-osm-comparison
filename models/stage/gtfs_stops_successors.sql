@@ -6,7 +6,7 @@ MODEL (
 SELECT DISTINCT
   REPLACE(p.stop_id, '_G', '') AS predecessor_id,
   REPLACE(s.stop_id, '_G', '') AS successor_id,
-  CASE WHEN route_type IN (101, 102, 103, 106, 200, 201, 202) THEN TRUE ELSE FALSE END AS is_long_distance
+ CASE WHEN route_type IN (100, 101, 102, 103, 106, 200, 201, 202) THEN TRUE ELSE FALSE END AS is_long_distance
 FROM gtfs.stop_times AS p
 JOIN gtfs.stop_times AS s
   ON p.trip_id = s.trip_id AND p.stop_sequence = s.stop_sequence - 1

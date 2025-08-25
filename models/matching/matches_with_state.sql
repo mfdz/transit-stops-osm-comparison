@@ -37,7 +37,8 @@ SELECT
     WHEN r.similarity_jaccard < 0.4
     THEN 'MATCHED_THOUGH_NAMES_DIFFER'
     ELSE 'MATCHED'
-  END AS MATCH_STATE
+  END AS MATCH_STATE,
+  r.* EXCLUDE (globaleid, osm_id),
 FROM matching.transit_stops AS t
 LEFT JOIN matching.matches AS m
   ON t.globaleid = m.globaleid

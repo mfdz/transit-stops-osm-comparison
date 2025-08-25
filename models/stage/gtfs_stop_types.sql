@@ -9,7 +9,7 @@ WITH route_types_per_stop AS (
     CASE
       WHEN route_type BETWEEN 700 AND 799 OR route_type = 1501 OR route_type = 300
       THEN 3
-      WHEN route_type IN ('100', '101', '102', '103', '106', '109')
+      WHEN route_type BETWEEN 100 AND 199
       THEN 2
       WHEN route_type BETWEEN 400 AND 499
       THEN 1

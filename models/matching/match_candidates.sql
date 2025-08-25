@@ -13,7 +13,7 @@ WITH filtered_match_candidates AS (
     JOIN matching.transit_stops t USING (globaleid)
 WHERE NOT ifnull((o.mode in ('trainish', 'train','light_rail','tram', 'ferry') AND t.mode IN ('bus'))
 OR (o.mode in ('bus') AND t.mode IN ('tram', 'light_rail', 'train', 'trainish', 'ferry')), false)
-),
+OR o.ref=t.globaleid ) ,
 distance_ranked_match_candidates AS (
   SELECT
     *,

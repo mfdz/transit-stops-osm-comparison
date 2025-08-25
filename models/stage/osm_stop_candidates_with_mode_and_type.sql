@@ -32,7 +32,7 @@ SELECT
       THEN 'light_rail'
       WHEN train OR tram OR light_rail
       THEN 'trainish'
-      WHEN ferry
+      WHEN ferry OR amenity='ferry_terminal'
       THEN 'ferry'
       WHEN funicular
       THEN 'funicular'
@@ -52,6 +52,8 @@ SELECT
     THEN 'platform'
     WHEN railway = 'halt'
     THEN 'halt'
+    WHEN amenity = 'ferry_station'
+    THEN 'station'
     ELSE NULL
   END AS "type",
   NULLIF(TRIM(CASE

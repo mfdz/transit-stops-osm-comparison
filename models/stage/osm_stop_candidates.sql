@@ -13,6 +13,7 @@ WITH stop_features AS (
       MAP_EXTRACT_VALUE(tags, 'railway') IN ('stop', 'tram_stop', 'halt')
       OR MAP_EXTRACT_VALUE(tags, 'highway') = 'bus_stop'
       OR MAP_EXTRACT_VALUE(tags, 'public_transport') IN ('stop_position', 'platform')
+      OR MAP_EXTRACT_VALUE(tags, 'amenity') = 'ferry_terminal'
     )
 ), platform_ways AS (
   SELECT
@@ -36,6 +37,7 @@ SELECT
   MAP_EXTRACT_VALUE(tags, 'highway') AS "highway",
   MAP_EXTRACT_VALUE(tags, 'public_transport') AS "public_transport",
   MAP_EXTRACT_VALUE(tags, 'ref:IFOPT') AS ref_ifopt,
+  MAP_EXTRACT_VALUE(tags, 'amenity') AS amenity,
   MAP_EXTRACT_VALUE(tags, 'ref:pt_id') AS ref_pt_id,
   MAP_EXTRACT_VALUE(tags, 'ref') AS "ref",
   MAP_EXTRACT_VALUE(tags, 'local_ref') AS local_ref,

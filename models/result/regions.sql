@@ -4,5 +4,5 @@ MODEL (
 );
 
 SELECT DISTINCT
-  SUBSTRING(globaleID, 0, STRPOS(SUBSTRING(globaleID || ':', 4), ':') + 3) AS region
+  SUBSTRING(stop_id, 0, STRPOS(SUBSTRING(stop_id || ':', 4), ':') + 3) AS region
 FROM matching.transit_stops

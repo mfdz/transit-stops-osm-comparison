@@ -5,11 +5,11 @@ AUDIT (
 
 SELECT
   osm_id,
-  globaleid,
+  stop_id,
   COUNT(*) AS cnt
 FROM matching.match_candidates
 GROUP BY
   osm_id,
-  globaleid
+  stop_id
 HAVING
   cnt > 1

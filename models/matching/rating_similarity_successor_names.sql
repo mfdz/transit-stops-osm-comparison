@@ -6,7 +6,7 @@ MODEL (
 /* TODO: might need to remove locality, street suffix (asse) "-" and "," from names as we did in v1 */
 WITH successor_name_tuples AS (
   SELECT
-    c.globaleid,
+    c.stop_id,
     c.osm_id,
     GREATEST(
       MAX(JACCARD(NULLIF(t.short_successor_name, ''), o.successor_name)),
@@ -14,15 +14,15 @@ WITH successor_name_tuples AS (
     ) AS similarity
   FROM matching.match_candidates AS c
   JOIN stage.gtfs_stops_successor_names AS t
-    ON c.globaleid = t.stop_id
+    ON c.stop_id = t.stop_id
   JOIN stage.osm_stops_successor_name AS o
     USING (osm_ID)
   GROUP BY
-    c.globaleid,
+    c.stop_id,
     c.osm_id
 ), predecessor_name_tuples AS (
   SELECT
-    c.globaleid,
+    c.stop_id,
     c.osm_id,
     GREATEST(
       MAX(JACCARD(NULLIF(t.short_predecessor_name, ''), o.predecessor_name)),
@@ -30,15 +30,15 @@ WITH successor_name_tuples AS (
     ) AS similarity
   FROM matching.match_candidates AS c
   JOIN stage.gtfs_stops_predecessor_names AS t
-    ON c.globaleid = t.stop_id
+    ON c.stop_id = t.stop_id
   JOIN stage.osm_stops_predecessor_name AS o
     USING (osm_ID)
   GROUP BY
-    c.globaleid,
+    c.stop_id,
     c.osm_id
 ), osm_predecessor_transit_successor_name_tuples AS (
   SELECT
-    c.globaleid,
+    c.stop_id,
     c.osm_id,
     GREATEST(
       MAX(JACCARD(NULLIF(t.short_successor_name, ''), o.predecessor_name)),
@@ -46,15 +46,15 @@ WITH successor_name_tuples AS (
     ) AS similarity
   FROM matching.match_candidates AS c
   JOIN stage.gtfs_stops_successor_names AS t
-    ON c.globaleid = t.stop_id
+    ON c.stop_id = t.stop_id
   JOIN stage.osm_stops_predecessor_name AS o
     USING (osm_ID)
   GROUP BY
-    c.globaleid,
+    c.stop_id,
     c.osm_id
 ), osm_successor_transit_predecessor_name_tuples AS (
   SELECT
-    c.globaleid,
+    c.stop_id,
     c.osm_id,
     GREATEST(
       MAX(JACCARD(NULLIF(t.short_predecessor_name, ''), o.successor_name)),
@@ -62,15 +62,15 @@ WITH successor_name_tuples AS (
     ) AS similarity
   FROM matching.match_candidates AS c
   JOIN stage.gtfs_stops_predecessor_names AS t
-    ON c.globaleid = t.stop_id
+    ON c.stop_id = t.stop_id
   JOIN stage.osm_stops_successor_name AS o
     USING (osm_ID)
   GROUP BY
-    c.globaleid,
+    c.stop_id,
     c.osm_id
 )
 SELECT
-  c.globaleid,
+  c.stop_id,
   c.osm_id,
   s.similarity AS osm_succ_transit_succ_similarity,
   p.similarity AS osm_pred_transit_pred_similarity,
@@ -93,10 +93,10 @@ SELECT
   END AS similarity_successors
 FROM matching.match_candidates AS c
 LEFT JOIN successor_name_tuples AS s
-  ON c.globaleid = s.globaleid AND c.osm_id = s.osm_id
+  ON c.stop_id = s.stop_id AND c.osm_id = s.osm_id
 LEFT JOIN predecessor_name_tuples AS p
-  ON c.globaleid = p.globaleid AND c.osm_id = p.osm_id
+  ON c.stop_id = p.stop_id AND c.osm_id = p.osm_id
 LEFT JOIN osm_predecessor_transit_successor_name_tuples AS opts
-  ON c.globaleid = opts.globaleid AND c.osm_id = opts.osm_id
+  ON c.stop_id = opts.stop_id AND c.osm_id = opts.osm_id
 LEFT JOIN osm_successor_transit_predecessor_name_tuples AS tpos
-  ON c.globaleid = tpos.globaleid AND c.osm_id = tpos.osm_id
+  ON c.stop_id = tpos.stop_id AND c.osm_id = tpos.osm_id

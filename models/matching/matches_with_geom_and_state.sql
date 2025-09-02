@@ -2,7 +2,7 @@ MODEL (
   name matching.matches_with_geom_and_state,
   kind FULL,
   physical_properties (
-    primary_key=(globaleid, osm_id)
+    primary_key=(stop_id, osm_id)
   )
 );
 

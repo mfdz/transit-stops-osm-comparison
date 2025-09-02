@@ -7,7 +7,7 @@ SELECT
   stop_long_name,
   locality,
   stop_name_without_locality,
-  t.globaleId AS stop_id,
+  t.stop_id AS stop_id,
   t.parent,
   t.latitude,
   t.longitude,
@@ -27,7 +27,7 @@ SELECT
   END AS WKT
 FROM matching.MATCHES_with_state AS t
 LEFT JOIN matching.rating_similarity_all AS r
-  USING (globaleId, osm_id)
+  USING (stop_id, osm_id)
 LEFT JOIN stage.osm_stops AS o
   ON o.osm_id = t.osm_id
 LEFT JOIN (
@@ -47,4 +47,4 @@ LEFT JOIN (
   GROUP BY
     g.stop_id
 ) AS gtfs_succ
-  ON t.globaleId = gtfs_succ.stop_id
+  ON t.stop_id = gtfs_succ.stop_id

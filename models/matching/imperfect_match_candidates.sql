@@ -7,9 +7,9 @@ SELECT
   *
 FROM matching.ranked_match_candidates
 WHERE
-  NOT globaleid IN (
+  NOT stop_id IN (
     SELECT
-      globaleid
+      stop_id
     FROM matching.perfect_matches
   )
   AND NOT osm_id IN (

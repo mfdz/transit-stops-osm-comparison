@@ -10,14 +10,14 @@ MODEL (
 WITH filtered_match_candidates AS (
   SELECT mv.* FROM matching.match_candidates_in_vicinity mv
     JOIN stage.osm_stops o USING (osm_id)
-    JOIN matching.transit_stops t USING (globaleid)
+    JOIN matching.transit_stops t USING (stop_id)
 WHERE NOT ifnull((o.mode in ('trainish', 'train','light_rail','tram', 'ferry') AND t.mode IN ('bus'))
 OR (o.mode in ('bus') AND t.mode IN ('tram', 'light_rail', 'train', 'trainish', 'ferry')), false)
-OR o.ref=t.globaleid ) ,
+OR o.ref=t.stop_id ) ,
 distance_ranked_match_candidates AS (
   SELECT
     *,
-    ROW_NUMBER() OVER (PARTITION BY globaleId ORDER BY distance ASC) AS stop_ranking
+    ROW_NUMBER() OVER (PARTITION BY stop_id ORDER BY distance ASC) AS stop_ranking
   FROM filtered_match_candidates
 )
 SELECT

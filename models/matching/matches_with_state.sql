@@ -9,10 +9,10 @@ WITH stations_with_at_least_on_match AS (
   FROM matching.matches
 ), multiple_osm_matches_for_ifopt AS (
   SELECT
-    globaleid
+    stop_id
   FROM matching.matches
   GROUP BY
-    globaleid
+    stop_id
   HAVING
     COUNT(*) > 1
 )
@@ -20,13 +20,13 @@ SELECT
   t.*,
   o.osm_id,
   CASE
-    WHEN m.globaleid IS NULL AND t.route_short_names IS NULL
+    WHEN m.stop_id IS NULL AND t.route_short_names IS NULL
     THEN 'NO_MATCH_AND_SEEMS_UNSERVED'
-    WHEN m.globaleid IS NULL AND NOT l.station IS NULL
+    WHEN m.stop_id IS NULL AND NOT l.station IS NULL
     THEN 'NO_MATCH_BUT_OTHER_PLATFORM_MATCHED'
-    WHEN m.globaleid IS NULL
+    WHEN m.stop_id IS NULL
     THEN 'NO_MATCH'
-    WHEN NOT a.globaleid IS NULL
+    WHEN NOT a.stop_id IS NULL
     THEN 'MATCHED_AMBIGUOUSLY'
     WHEN r.similarity_successors = -1.0
     THEN 'MATCHED_THOUGH_REVERSED_DIR'
@@ -38,12 +38,12 @@ SELECT
     THEN 'MATCHED_THOUGH_NAMES_DIFFER'
     ELSE 'MATCHED'
   END AS MATCH_STATE,
-  r.* EXCLUDE (globaleid, osm_id),
+  r.* EXCLUDE (stop_id, osm_id),
 FROM matching.transit_stops AS t
 LEFT JOIN matching.matches AS m
-  ON t.globaleid = m.globaleid
+  ON t.stop_id = m.stop_id
 LEFT JOIN matching.rating_similarity_all AS r
-  ON m.globaleid = r.globaleid AND m.osm_id = r.osm_id
+  ON m.stop_id = r.stop_id AND m.osm_id = r.osm_id
 LEFT JOIN stage.osm_stops AS o
   ON o.osm_id = m.osm_id
 LEFT JOIN (
@@ -54,7 +54,7 @@ LEFT JOIN (
   ON t.parent = l.station
 LEFT JOIN (
   SELECT
-    globaleid
+    stop_id
   FROM multiple_osm_matches_for_ifopt
 ) AS a
-  ON m.globaleid = a.globaleid
+  ON m.stop_id = a.stop_id

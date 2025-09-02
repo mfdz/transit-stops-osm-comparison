@@ -16,4 +16,4 @@ SELECT
   *
 FROM matching.ranked_match_candidates AS s
 WHERE
-  parent_or_station=globaleid
+  parent_or_station=stop_id

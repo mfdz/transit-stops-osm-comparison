@@ -64,7 +64,7 @@ WITH quays AS (
     stop_id
 )
 SELECT
-  q.dhid AS globaleID,
+  q.dhid AS stop_id,
   q.*
   EXCLUDE (dhid),
   COALESCE(e.expanded_name, q.name) AS stop_long_name,
@@ -155,7 +155,7 @@ WHERE
   )
 UNION ALL
 SELECT
-  s.dhid AS globaleID,
+  s.dhid AS stop_id,
   s.*
   EXCLUDE (dhid),
   COALESCE(e.expanded_name, s.name) AS stop_long_name,

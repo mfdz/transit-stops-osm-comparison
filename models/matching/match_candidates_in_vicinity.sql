@@ -5,7 +5,7 @@ MODEL (
 );
 
 SELECT
-  t.globaleID,
+  t.stop_id,
   t.number_of_station_quays,
   o.osm_id,
   ST_DISTANCE(t.projected_geometry, o.projected_geometry) AS distance

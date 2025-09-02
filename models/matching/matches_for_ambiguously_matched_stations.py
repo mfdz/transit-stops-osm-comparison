@@ -14,11 +14,11 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
     for station_id in rows['parent_or_station'].unique():
         # Build pivot by ifopt and osm_id
         candidates_per_parent = rows.loc[rows['parent_or_station'] == station_id]
-        similarity_matrix = candidates_per_parent.pivot(columns='globaleid', index='osm_id',values='similarity').fillna(0.0)
+        similarity_matrix = candidates_per_parent.pivot(columns='stop_id', index='osm_id',values='similarity').fillna(0.0)
         # solve assignment problem
         x,y = linear_sum_assignment(similarity_matrix)
         # collect results
-        matches = pd.DataFrame({'globaleid': similarity_matrix.columns[y], 'osm_id': similarity_matrix.index[x]})
+        matches = pd.DataFrame({'stop_id': similarity_matrix.columns[y], 'osm_id': similarity_matrix.index[x]})
         # return df
         all_matches.append(matches)
         
@@ -27,7 +27,7 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
 @model(
     "matching.matches_for_ambiguously_matched_stations",
     columns={
-        "globaleid": "text",
+        "stop_id": "text",
         "osm_id": "text",
     },
     cron='@weekly',
@@ -48,7 +48,7 @@ def execute(
     while idx < len(districts_df):
         district = districts_df.iloc[idx]['district']
         # linear_sum_assignment optimizes for least sum, so we need to inverse similarity
-        query = f"SELECT parent_or_station, globaleid, osm_id, -similarity similarity FROM {match_candidates_table} WHERE parent_or_station LIKE '{district}%' ORDER BY parent_or_station,globaleid,similarity DESC, osm_id"
+        query = f"SELECT parent_or_station, stop_id, osm_id, -similarity similarity FROM {match_candidates_table} WHERE parent_or_station LIKE '{district}%' ORDER BY parent_or_station,stop_id,similarity DESC, osm_id"
         rows = context.fetchdf(query)
         
         if not len(rows) == 0:

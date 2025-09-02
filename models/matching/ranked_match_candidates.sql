@@ -6,19 +6,19 @@ MODEL (
 
 WITH similarity_ranked_match_candidates AS (
   SELECT
-    globaleid,
+    stop_id,
     osm_id,
     similarity,
-    ROW_NUMBER() OVER (PARTITION BY globaleId ORDER BY similarity DESC, osm_id ASC) AS stop_ranking
+    ROW_NUMBER() OVER (PARTITION BY stop_id ORDER BY similarity DESC, osm_id ASC) AS stop_ranking
   FROM matching.rating_similarity_all
   WHERE
     similarity > 0.04
 )
 SELECT
-  COALESCE(t.parent, t.globaleid) AS parent_or_station,
+  COALESCE(t.parent, t.stop_id) AS parent_or_station,
   s.*
 FROM similarity_ranked_match_candidates AS s
 JOIN matching.transit_stops AS t
-  ON s.globaleid = t.globaleid
+  ON s.stop_id = t.stop_id
 WHERE
   stop_ranking < 5

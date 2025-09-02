@@ -5,7 +5,7 @@ MODEL (
 
 WITH names AS (
   SELECT
-    c.globaleid,
+    c.stop_id,
     o.osm_id,
     NULLIF(TRIM(REPLACE(REGEXP_REPLACE(REPLACE(t.stop_long_name, ',', ''), '\([\w\.\W]*\)','','g'),'  ',' ')),'') AS stop_long_name,
     t.locality,
@@ -13,7 +13,7 @@ WITH names AS (
     NULLIF(TRIM(REPLACE(REGEXP_REPLACE(REPLACE(o.name, ',', ''), '\([\w\.\W]*\)','','g'),'  ',' ')),'') AS osm_name
   FROM matching.match_candidates AS c
   JOIN matching.transit_stops AS t
-    USING (globaleid)
+    USING (stop_id)
   JOIN stage.osm_stops AS o
     USING (osm_ID)
 )
@@ -23,7 +23,7 @@ SELECT
     THEN @NAME_SIMILARITY_OSM_NAME_EMPTY
     ELSE GREATEST(JACCARD(stop_long_name, osm_name), JACCARD(stop_name_without_locality, osm_name))
   END AS similarity_jaccard,
-  globaleid,
+  stop_id,
   osm_id,
   stop_long_name,
   stop_name_without_locality,

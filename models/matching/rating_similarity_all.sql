@@ -4,7 +4,7 @@ MODEL (
 );
 
 SELECT
-  c.globaleid,
+  c.stop_id,
   c.osm_id,
   i.similarity_ifopt,
   m.similarity_mode,
@@ -31,12 +31,12 @@ SELECT
   END AS similarity
 FROM matching.match_candidates AS c
 LEFT JOIN matching.rating_similarity_ifopt AS i
-  ON c.globaleid = i.globaleid AND c.osm_id = i.osm_id
+  ON c.stop_id = i.stop_id AND c.osm_id = i.osm_id
 LEFT JOIN matching.rating_similarity_mode AS m
-  ON c.globaleid = m.globaleid AND c.osm_id = m.osm_id
+  ON c.stop_id = m.stop_id AND c.osm_id = m.osm_id
 LEFT JOIN matching.rating_similarity_name AS n
-  ON c.globaleid = n.globaleid AND c.osm_id = n.osm_id
+  ON c.stop_id = n.stop_id AND c.osm_id = n.osm_id
 LEFT JOIN matching.rating_similarity_platform_code AS p
-  ON c.globaleid = p.globaleid AND c.osm_id = p.osm_id
+  ON c.stop_id = p.stop_id AND c.osm_id = p.osm_id
 LEFT JOIN matching.rating_similarity_successor_names AS s
-  ON c.globaleid = s.globaleid AND c.osm_id = s.osm_id
+  ON c.stop_id = s.stop_id AND c.osm_id = s.osm_id

@@ -29,7 +29,7 @@ plan-no-backfill:
 	sqlmesh plan --auto-apply --skip-backfill --no-gaps
 
 plan-restate:
-	sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*'
+	sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*' -r 'delfi.*' -r 'matching.match_meta_data'
 
 .last_run: download
 	# TODO sqlmesh run

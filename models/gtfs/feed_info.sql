@@ -4,8 +4,7 @@ MODEL (
   columns (
     feed_publisher_name TEXT,
     feed_publisher_url TEXT,
-    feed_lang TEXT,
-    feed_version TEXT
+    feed_lang TEXT
   ),
   grain (
     feed_id

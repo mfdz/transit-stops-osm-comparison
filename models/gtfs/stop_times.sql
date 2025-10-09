@@ -8,8 +8,7 @@ MODEL (
     arrival_time TEXT,
     departure_time TEXT,
     pickup_type SMALLINT,
-    drop_off_type SMALLINT,
-    stop_headsign TEXT
+    drop_off_type SMALLINT
   ),
   grain (trip_id, stop_sequence)
 );

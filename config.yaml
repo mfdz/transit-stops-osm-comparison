@@ -5,7 +5,7 @@ gateways:
       # https://sqlmesh.readthedocs.io/en/stable/reference/configuration/#connections
       # https://sqlmesh.readthedocs.io/en/stable/integrations/engines/duckdb/#connection-options
       type: duckdb
-      database: db.db
+      database: db_ee.db
       # concurrent_tasks: 1
       # register_comments: True
       # pre_ping: False
@@ -27,7 +27,14 @@ variables:
   MINIMUM_SUCCESSOR_SIMILARITY: 0.6
   MINIMUM_SUCCESSOR_PREDECESSOR_DISTANCE: 0.11
 
-  TRANSIT_STOPS_SCHEMA: delfi
+  TRANSIT_STOPS_SCHEMA: ee
+
+ignore_patterns:
+  - models/delfi/*
+  - models/no/*
+  - models/result/overview_stats.sql
+  - models/matching/match_meta_data.py
+
 
 default_gateway: duckdb
 

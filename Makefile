@@ -7,8 +7,9 @@ PYOSMIUM_IMAGE=mfdz/pyosmium
 # Shortcuts for the (dockerized) transform/merge tools.
 OSMIUM_UPDATE = docker run -i --rm -v $(HOST_MOUNT)/seeds:$(TOOL_DATA) $(PYOSMIUM_IMAGE) pyosmium-up-to-date
 
+COUNTRY=ee
 # Read environment variable files, in case they exist
--include .env .env.local
+-include .env_$(COUNTRY) .env.local
 
 
 .PHONY: download, plan-no-backfill, plan-restate

@@ -31,7 +31,8 @@ def match(rows: pd.DataFrame) -> pd.DataFrame:
         "osm_id": "text",
     },
     cron='@weekly',
-    kind="FULL"
+    depends_on=["matching.imperfect_match_candidates"],
+    kind="FULL",
 )
 def execute(
     context: ExecutionContext,
@@ -43,7 +44,7 @@ def execute(
     logger = logging.getLogger(__name__)
 
     match_candidates_table = context.resolve_table("matching.imperfect_match_candidates")
-    districts_df = context.fetchdf("SELECT DISTINCT substr(parent_or_station,0,9) district FROM matching.imperfect_match_candidates ORDER BY substr(parent_or_station,0,9)")
+    districts_df = context.fetchdf(f"SELECT DISTINCT substr(parent_or_station,0,9) district FROM {match_candidates_table} ORDER BY substr(parent_or_station,0,9)")
     idx = 0
     while idx < len(districts_df):
         district = districts_df.iloc[idx]['district']

@@ -16,6 +16,7 @@ MODEL (
 SELECT
   *
 FROM READ_CSV(
-  'zip://seeds/gtfs.zip/trips.txt',
-  quote = '"'
+  'zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/trips.txt',
+  quote = '"',
+  types={'route_id': 'VARCHAR'}
 )

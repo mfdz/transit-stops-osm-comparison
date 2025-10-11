@@ -15,4 +15,4 @@ MODEL (
 
 SELECT
   *, '' platform_code
-FROM READ_CSV('zip://seeds/gtfs.zip/stops.txt', quote = '"')
+FROM READ_CSV('zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/stops.txt', quote = '"')

@@ -5,7 +5,6 @@ MODEL (
     route_id TEXT,
     trip_id TEXT,
     service_id TEXT,
-    shape_id TEXT,
     trip_headsign TEXT
   ),
   grain (

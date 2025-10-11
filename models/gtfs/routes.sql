@@ -6,8 +6,7 @@ MODEL (
     route_id TEXT,
     route_type SMALLINT,
     route_long_name TEXT,
-    route_short_name TEXT,
-    route_color TEXT
+    route_short_name TEXT
   ),
   grain (
     route_id

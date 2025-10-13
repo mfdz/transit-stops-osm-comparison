@@ -6,7 +6,9 @@ MODEL (
     stop_lon DOUBLE,
     stop_lat DOUBLE,
     stop_name TEXT,
-    platform_code TEXT
+    platform_code TEXT,
+    parent_station TEXT,
+    location_type INT
   ),
   grain (
     stop_id
@@ -14,5 +16,5 @@ MODEL (
 );
 
 SELECT
-  *, '' platform_code
+  *
 FROM READ_CSV('zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/stops.txt', quote = '"')

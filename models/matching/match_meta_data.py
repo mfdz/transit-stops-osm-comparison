@@ -22,9 +22,9 @@ def execute(
     **kwargs: t.Any,
 ) -> pd.DataFrame:
     folder = 'seeds'
-    gtfs_timestamp = os.path.getmtime(f'{folder}/gtfs.zip')
-    osm_timestamp = os.path.getmtime(f'{folder}/data.osm.pbf')
-    stops_timestamp = os.path.getmtime(f'{folder}/zhv.zip')
+    gtfs_timestamp = os.path.getmtime(f'{folder}/de/gtfs.zip')
+    osm_timestamp = os.path.getmtime(f'{folder}/de/data.osm.pbf')
+    stops_timestamp = os.path.getmtime(f'{folder}/de/zhv.zip')
     data = { 
       'key': ['match_timestamp', 'gtfs_timestamp', 'osm_timestamp','stops_timestamp'], 
       'value': [time.time(), gtfs_timestamp, osm_timestamp, stops_timestamp],

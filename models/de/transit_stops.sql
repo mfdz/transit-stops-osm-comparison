@@ -1,5 +1,5 @@
 MODEL (
-  name delfi.transit_stops,
+  name de.transit_stops,
   kind FULL,
   tags delfi,
   description "Quays and stations without quays, with a normalized name and quay name extracted (as best effort) from the quay's name. Coordinate is projected to UTM32 to allow RTREE indexing and fast distance calculations"
@@ -17,10 +17,10 @@ WITH quays AS (
     q.Longitude,
     q.type,
     s.dhid AS parent
-  FROM delfi.zhv AS q
-  JOIN delfi.zhv AS a_or_s
+  FROM de.zhv AS q
+  JOIN de.zhv AS a_or_s
     ON q.parent = a_or_s.dhid
-  JOIN delfi.zhv AS s
+  JOIN de.zhv AS s
     ON a_or_s.parent = s.dhid AND s.type = 'S'
   WHERE
     q.type = 'Q'
@@ -43,14 +43,14 @@ WITH quays AS (
     s.Longitude,
     s.type,
     NULL AS parent
-  FROM delfi.zhv AS s
+  FROM de.zhv AS s
   WHERE
     s.type = 'S'
     AND NOT s.DHID IN (
       SELECT
         a_or_s.parent
-      FROM delfi.zhv AS q
-      JOIN delfi.zhv AS a_or_s
+      FROM de.zhv AS q
+      JOIN de.zhv AS a_or_s
         ON q.parent = a_or_s.dhid
       WHERE
         q.type = 'Q'
@@ -136,7 +136,7 @@ SELECT
   route_short_names,
   ST_TRANSFORM(ST_POINT(latitude, longitude), 'EPSG:4326', 'EPSG:25832') AS projected_geometry
 FROM quays AS q
-LEFT JOIN delfi.zhv_expanded_names AS e
+LEFT JOIN de.zhv_expanded_names AS e
   ON q.parent = e.dhid
 JOIN number_of_station_quays AS n
   USING (parent)
@@ -184,7 +184,7 @@ SELECT
   route_short_names,
   ST_TRANSFORM(ST_POINT(latitude, longitude), 'EPSG:4326', 'EPSG:25832') AS projected_geometry
 FROM stations_without_quays AS s
-LEFT JOIN delfi.zhv_expanded_names AS e
+LEFT JOIN de.zhv_expanded_names AS e
   ON s.dhid = e.dhid
 LEFT JOIN route_short_names_per_stop_id AS rsn
   ON rsn.stop_id = s.dhid

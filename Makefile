@@ -7,24 +7,24 @@ PYOSMIUM_IMAGE=mfdz/pyosmium
 # Shortcuts for the (dockerized) transform/merge tools.
 OSMIUM_UPDATE = docker run -i --rm -v $(HOST_MOUNT)/seeds:$(TOOL_DATA) $(PYOSMIUM_IMAGE) pyosmium-up-to-date
 
-COUNTRY=ie
+COUNTRY=de
 # Read environment variable files, in case they exist
 -include .env_$(COUNTRY) .env.local
 
 
 .PHONY: download, plan-no-backfill, plan-restate
 
-download: seeds/gtfs.zip seeds/zhv.zip
+download: seeds/$(COUNTRY)/gtfs.zip seeds/$(COUNTRY)/zhv.zip
 	# Download/Update OSM extracts from Geofabrik
-	OSMIUM_UPDATE="$(OSMIUM_UPDATE) $(TOOL_DATA)/data.osm.pbf" ./scripts/update_osm.sh '$(OSM_DOWNLOAD_URL)' 'seeds/data.osm.pbf'
+	OSMIUM_UPDATE="$(OSMIUM_UPDATE) $(TOOL_DATA)/$(COUNTRY)/data.osm.pbf" ./scripts/update_osm.sh '$(OSM_DOWNLOAD_URL)' 'seeds/$(COUNTRY)/data.osm.pbf'
 	
-seeds/gtfs.zip: FORCE
+seeds/$(COUNTRY)/gtfs.zip: FORCE
 	# Download GTFS data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
-	./scripts/download.sh $(GTFS_DOWNLOAD_URL) seeds/gtfs.zip || true
+	./scripts/download.sh $(GTFS_DOWNLOAD_URL) seeds/$(COUNTRY)/gtfs.zip || true
 
-seeds/zhv.zip: FORCE
+seeds/$(COUNTRY)/zhv.zip: FORCE
 	# Download zHV data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
-	./scripts/download.sh $(STOP_REGISTRY_DOWNLOAD_URL) seeds/zhv.zip || true
+	./scripts/download.sh $(STOP_REGISTRY_DOWNLOAD_URL) seeds/$(COUNTRY)/zhv.zip || true
 
 plan-no-backfill:
 	sqlmesh plan --auto-apply --skip-backfill --no-gaps

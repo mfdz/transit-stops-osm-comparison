@@ -1,10 +1,10 @@
 .cache/
 logs/
 seeds/
-db.db
+db*.db
 __pycache__/
 
-.env
+.env*
 .env.local
 seeds/
 TODO/

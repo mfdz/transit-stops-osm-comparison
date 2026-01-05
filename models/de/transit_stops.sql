@@ -89,7 +89,7 @@ SELECT
   ) AS assumed_platform,
   n.cnt AS number_of_station_quays,
   CASE
-    WHEN gst.route_type = 3 
+    WHEN gst.route_type = 3
     THEN 'bus'
     WHEN gst.route_type = 2
     THEN 'train'
@@ -167,7 +167,7 @@ SELECT
   NULL AS assumed_platform,
   1 AS number_of_station_quays,
   CASE
-    WHEN gst.route_type = 3 
+    WHEN gst.route_type = 3
     THEN 'bus'
     WHEN gst.route_type = 2
     THEN 'train'

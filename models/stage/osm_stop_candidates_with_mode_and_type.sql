@@ -32,7 +32,7 @@ SELECT
       THEN 'light_rail'
       WHEN train OR tram OR light_rail
       THEN 'trainish'
-      WHEN ferry OR amenity='ferry_terminal'
+      WHEN ferry OR amenity = 'ferry_terminal'
       THEN 'ferry'
       WHEN funicular
       THEN 'funicular'
@@ -56,11 +56,16 @@ SELECT
     THEN 'station'
     ELSE NULL
   END AS "type",
-  NULLIF(TRIM(CASE
-    WHEN LENGTH(ref) < 3
-    THEN ref
-    WHEN LENGTH(local_ref) < 3
-    THEN local_ref
-    ELSE REGEXP_EXTRACT(name, ' (\d+$)', 1)
-  END), '') AS assumed_platform
+  NULLIF(
+    TRIM(
+      CASE
+        WHEN LENGTH(ref) < 3
+        THEN ref
+        WHEN LENGTH(local_ref) < 3
+        THEN local_ref
+        ELSE REGEXP_EXTRACT(name, ' (\d+$)', 1)
+      END
+    ),
+    ''
+  ) AS assumed_platform
 FROM stage.osm_stop_candidates AS c

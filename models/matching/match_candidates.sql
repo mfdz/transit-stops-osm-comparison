@@ -8,13 +8,27 @@ MODEL (
 );
 
 WITH filtered_match_candidates AS (
-  SELECT mv.* FROM matching.match_candidates_in_vicinity mv
-    JOIN stage.osm_stops o USING (osm_id)
-    JOIN matching.transit_stops t USING (stop_id)
-WHERE NOT ifnull((o.mode in ('trainish', 'train','light_rail','tram', 'ferry') AND t.mode IN ('bus'))
-OR (o.mode in ('bus') AND t.mode IN ('tram', 'light_rail', 'train', 'trainish', 'ferry')), false)
-OR o.ref=t.stop_id ) ,
-distance_ranked_match_candidates AS (
+  SELECT
+    mv.*
+  FROM matching.match_candidates_in_vicinity AS mv
+  JOIN stage.osm_stops AS o
+    USING (osm_id)
+  JOIN matching.transit_stops AS t
+    USING (stop_id)
+  WHERE
+    NOT COALESCE(
+      (
+        o.mode IN ('trainish', 'train', 'light_rail', 'tram', 'ferry')
+        AND t.mode IN ('bus')
+      )
+      OR (
+        o.mode IN ('bus')
+        AND t.mode IN ('tram', 'light_rail', 'train', 'trainish', 'ferry')
+      ),
+      FALSE
+    )
+    OR o.ref = t.stop_id
+), distance_ranked_match_candidates AS (
   SELECT
     *,
     ROW_NUMBER() OVER (PARTITION BY stop_id ORDER BY distance ASC) AS stop_ranking

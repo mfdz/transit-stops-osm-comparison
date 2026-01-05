@@ -37,4 +37,4 @@ SELECT
   friday,
   saturday,
   sunday
-FROM READ_CSV('zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/calendar.txt')
+FROM READ_CSV('zip://seeds/' || @TRANSIT_STOPS_SCHEMA || '/gtfs.zip/calendar.txt')

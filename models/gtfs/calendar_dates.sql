@@ -19,4 +19,4 @@ SELECT
     SUBSTRING('' || date, 7, 2)::INT
   ) AS date,
   exception_type
-FROM READ_CSV('zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/calendar_dates.txt')
+FROM READ_CSV('zip://seeds/' || @TRANSIT_STOPS_SCHEMA || '/gtfs.zip/calendar_dates.txt')

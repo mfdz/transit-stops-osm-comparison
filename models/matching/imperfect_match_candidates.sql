@@ -13,9 +13,10 @@ WHERE
     FROM matching.perfect_matches
   )
   AND NOT osm_id IN (
-    -- Only ignore osm stops which are a 100% match.
+    /* Only ignore osm stops which are a 100% match. */
     SELECT
       osm_id
     FROM matching.perfect_matches
-    WHERE similarity=1.0
+    WHERE
+      similarity = 1.0
   )

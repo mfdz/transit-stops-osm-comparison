@@ -38,7 +38,8 @@ SELECT
     THEN 'MATCHED_THOUGH_NAMES_DIFFER'
     ELSE 'MATCHED'
   END AS MATCH_STATE,
-  r.* EXCLUDE (stop_id, osm_id),
+  r.*
+  EXCLUDE (stop_id, osm_id)
 FROM matching.transit_stops AS t
 LEFT JOIN matching.matches AS m
   ON t.stop_id = m.stop_id

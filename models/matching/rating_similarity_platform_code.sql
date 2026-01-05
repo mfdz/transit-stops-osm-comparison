@@ -8,7 +8,7 @@ WITH platform_codes AS (
     c.stop_id,
     o.osm_id,
     t.assumed_platform AS assumed_platform_code_transit,
-    nullif(o.assumed_platform,'') AS assumed_platform_code_osm
+    NULLIF(o.assumed_platform, '') AS assumed_platform_code_osm
   FROM matching.match_candidates AS c
   JOIN matching.transit_stops AS t
     USING (stop_id)

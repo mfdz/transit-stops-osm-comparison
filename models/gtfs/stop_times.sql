@@ -16,7 +16,7 @@ MODEL (
 SELECT
   *
 FROM READ_CSV(
-  'zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/stop_times.txt',
+  'zip://seeds/' || @TRANSIT_STOPS_SCHEMA || '/gtfs.zip/stop_times.txt',
   types = {'arrival_time': 'VARCHAR', 'departure_time': 'VARCHAR'},
   quote = '"'
 )

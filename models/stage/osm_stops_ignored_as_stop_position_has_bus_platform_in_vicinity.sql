@@ -11,6 +11,8 @@ WHERE
   h.type = 'stop'
   AND h.mode = 'bus'
   AND s.type = 'platform'
-  AND (h.ref = s.ref or h.name=s.name)
+  AND (
+    h.ref = s.ref OR h.name = s.name
+  )
   AND s.lat BETWEEN h.lat - 0.01 AND h.lat + 0.01
   AND s.lon BETWEEN h.lon - 0.01 AND h.lon + 0.01

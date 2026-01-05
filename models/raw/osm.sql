@@ -5,4 +5,4 @@ MODEL (
 
 SELECT
   *
-FROM ST_READOSM('seeds/'||@TRANSIT_STOPS_SCHEMA||'/data.osm.pbf')
+FROM ST_READOSM('seeds/' || @TRANSIT_STOPS_SCHEMA || '/data.osm.pbf')

@@ -9,7 +9,9 @@ SELECT
 FROM stage.osm_stop_candidates_with_mode_and_type AS h, stage.osm_stop_candidates_with_mode_and_type AS s
 WHERE
   h.type = 'platform'
-  AND (h.name = s.name OR h.ref=s.ref)
+  AND (
+    h.name = s.name OR h.ref = s.ref
+  )
   AND s.type = 'stop'
   AND s.mode IN ('light_rail', 'train', 'tram', 'trainish')
   AND h.mode IN ('light_rail', 'train', 'tram', 'trainish')

@@ -17,4 +17,4 @@ MODEL (
 
 SELECT
   *
-FROM READ_CSV('zip://seeds/'||@TRANSIT_STOPS_SCHEMA||'/gtfs.zip/stops.txt', quote = '"')
+FROM READ_CSV('zip://seeds/' || @TRANSIT_STOPS_SCHEMA || '/gtfs.zip/stops.txt', quote = '"')

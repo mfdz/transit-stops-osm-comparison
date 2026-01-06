@@ -44,8 +44,7 @@ plan-no-backfill:
 	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply --skip-backfill --no-gaps
 
 plan-restate:
-	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*' -r '$(COUNTRY).*' -r 'matching.match_meta_data'
-
+	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*' -r '$(COUNTRY).*' -r 'matching.*' -r 'history.*'
 
 compare: db_$(COUNTRY).db
 	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh run

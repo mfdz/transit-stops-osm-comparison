@@ -11,26 +11,39 @@ COUNTRY=de
 # Read environment variable files, in case they exist
 -include .env_$(COUNTRY) .env.local
 
+OSM_PBF_FILE=seeds/$(COUNTRY)/data.osm.pbf
+GTFS_FILE=seeds/$(COUNTRY)/gtfs.zip
+STOPS_FILE=seeds/$(COUNTRY)/zhv.zip
+SQLMESH_DOTENV_PATH=.env_$(COUNTRY)
 
 .PHONY: download, plan-no-backfill, plan-restate
 
-download: seeds/$(COUNTRY)/gtfs.zip seeds/$(COUNTRY)/zhv.zip
-	# Download/Update OSM extracts from Geofabrik
-	OSMIUM_UPDATE="$(OSMIUM_UPDATE) $(TOOL_DATA)/$(COUNTRY)/data.osm.pbf" ./scripts/update_osm.sh '$(OSM_DOWNLOAD_URL)' 'seeds/$(COUNTRY)/data.osm.pbf'
-	
-seeds/$(COUNTRY)/gtfs.zip: FORCE
-	# Download GTFS data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
-	./scripts/download.sh $(GTFS_DOWNLOAD_URL) seeds/$(COUNTRY)/gtfs.zip || true
 
-seeds/$(COUNTRY)/zhv.zip: FORCE
-	# Download zHV data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
-	./scripts/download.sh $(STOP_REGISTRY_DOWNLOAD_URL) seeds/$(COUNTRY)/zhv.zip || true
+download:
+	# Download GTFS data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
+	./scripts/download.sh $(GTFS_DOWNLOAD_URL) $(GTFS_FILE) || true
+	# Download stop data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
+	./scripts/download.sh $(STOP_REGISTRY_DOWNLOAD_URL) $(STOPS_FILE) || true
+	# Download/Update OSM extracts from Geofabrik
+	@if [ $(GTFS_FILE) -nt $(OSM_PBF_FILE) ] && [ $(STOPS_FILE) -nt $(OSM_PBF_FILE) ]; then \
+		OSMIUM_UPDATE="$(OSMIUM_UPDATE) $(TOOL_DATA)/$(COUNTRY)/data.osm.pbf" ./scripts/update_osm.sh '$(OSM_DOWNLOAD_URL)' '$(OSM_PBF_FILE)'; \
+	else \
+		echo "Don't update OSM as at least one of GTFS or stops file is older than pbf" ; \
+		false ; \
+	fi
+	
+db_$(COUNTRY).db:
+	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply
 
 plan-no-backfill:
-	sqlmesh plan --auto-apply --skip-backfill --no-gaps
+	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply --skip-backfill --no-gaps
 
 plan-restate:
-	sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*' -r 'delfi.*' -r 'matching.match_meta_data'
+	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*' -r '$(COUNTRY).*' -r 'matching.match_meta_data'
+
+
+compare: db_$(COUNTRY).db
+	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh run
 
 .last_run: download
 	# TODO sqlmesh run
@@ -42,4 +55,3 @@ out/index.html: .last_run
 	mkdir -p out
 	touch out/index.html
 
-FORCE:

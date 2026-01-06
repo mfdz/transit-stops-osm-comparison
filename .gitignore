@@ -5,6 +5,7 @@ db*.db
 __pycache__/
 
 .env*
+!.env_de
 .env.local
 seeds/
 TODO/

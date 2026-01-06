@@ -16,10 +16,15 @@ GTFS_FILE=seeds/$(COUNTRY)/gtfs.zip
 STOPS_FILE=seeds/$(COUNTRY)/zhv.zip
 SQLMESH_DOTENV_PATH=.env_$(COUNTRY)
 
-.PHONY: download, plan-no-backfill, plan-restate
+.PHONY: download, plan-no-backfill, plan-restate, compare, generate-reports
 
 
-download:
+# Download German district data for reporting
+seeds/de/VG250_KRS.shp:
+	./scripts/download.sh https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_1231/aktuell/vg250_12-31.utm32s.shape.ebenen.zip seeds/de/vg250_12-31.utm32s.shape.ebenen.zip
+	unzip -d seeds/de -j seeds/de/vg250_12-31.utm32s.shape.ebenen.zip vg250_12-31.utm32s.shape.ebenen/vg250_ebenen_1231/VG250_KRS.*
+
+download: seeds/de/VG250_KRS.shp
 	# Download GTFS data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
 	./scripts/download.sh $(GTFS_DOWNLOAD_URL) $(GTFS_FILE) || true
 	# Download stop data (we expect, that often files are not yet available and 404s occur, so we ignore errors with || true)
@@ -50,8 +55,6 @@ compare: db_$(COUNTRY).db
 	sqlmesh plan --auto-apply -r 'raw.*' -r 'gtfs.*'
 	touch .last_run
 
-out/index.html: .last_run
-	# TODO generiere
-	mkdir -p out
-	touch out/index.html
+generate-reports:
+	python3 scripts/generate_reports.py
 

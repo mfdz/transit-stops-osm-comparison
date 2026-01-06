@@ -1,6 +1,6 @@
 MODEL (
   name result.match_state_per_region,
-  kind VIEW
+  kind FULL
 );
 
 SELECT

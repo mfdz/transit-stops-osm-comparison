@@ -33,4 +33,7 @@ model_defaults:
   dialect: duckdb
   start: 2025-06-03
   
+# Create tables instead of views, to avoid e.g. https://github.com/duckdb/duckdb/issues/6704
+virtual_environment_mode: dev_only
+
 disable_anonymized_analytics: true

@@ -21,6 +21,7 @@ SQLMESH_DOTENV_PATH=.env_$(COUNTRY)
 
 # Download German district data for reporting
 seeds/de/VG250_KRS.shp:
+	mkdir -p seeds/de
 	./scripts/download.sh https://daten.gdz.bkg.bund.de/produkte/vg/vg250_ebenen_1231/aktuell/vg250_12-31.utm32s.shape.ebenen.zip seeds/de/vg250_12-31.utm32s.shape.ebenen.zip
 	unzip -d seeds/de -j seeds/de/vg250_12-31.utm32s.shape.ebenen.zip vg250_12-31.utm32s.shape.ebenen/vg250_ebenen_1231/VG250_KRS.*
 

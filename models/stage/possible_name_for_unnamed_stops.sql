@@ -30,7 +30,7 @@ WITH platform_way_names AS (
   SELECT
     no_name.osm_id,
     FIRST(close.name ORDER BY LENGTH(close.name) DESC) AS "name"
-  FROM stage.osm_stop_candidates AS no_name
+  FROM stage.osm_stop_candidates_with_mode_and_type AS no_name
   JOIN stage.osm_stop_candidates_with_mode_and_type AS close
     ON close.lat BETWEEN no_name.lat - 0.0001 AND no_name.lat + 0.0001
     AND close.lon BETWEEN no_name.lon - 0.0001 AND no_name.lon + 0.0001

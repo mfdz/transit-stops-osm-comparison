@@ -104,11 +104,11 @@ class StopsPerDistricLister():
             formatters={'region': lambda x: '<a href="region_'+x.replace(':','')+'.html">'+x+'</a>'})
         rep = Report()
 
-        rep.add_title("DELFI-OSM-Vergleich")
+        rep.add_title("DELFI-Haltestellen-OSM-Vergleich")
         rep.add_html("""
             <p>Die nachfolgenden Tabelle listet das kreisweise Ergebnis eines Abgleichs des 
-            zentrale Haltestellen-Registers von DELFI mit den Haltestellen-Informationen
-            von OpenStreetmap.</p>
+            zentralen Haltestellen-Verzeichnisses (zHV) des DELFI e.V. mit den Haltestellen-Informationen
+            aus OpenStreetMap.</p>
 
             <p>Diese Auswertung wird in der Regel wöchentlich nach Veröffentlichung aktueller DELFI zHV und GTFS-Daten aktualisiert.</p>
 
@@ -118,12 +118,12 @@ class StopsPerDistricLister():
             Einzelfall geprüft werden. Alle Angaben ohne Gewähr.</p>
 
             <p>Details zum Vorgehen beschreibt dieser <a href='https://www.mfdz.de/blog/haltestellendaten-bw-vergleich-osm-nvbw'>Blog-Beitrag</a>, 
-            der Code ist auf <a href='https://github.com/mfdz/nvbw-osm-stop-comparison'>Github</a> verfügbar. 
+            der Code ist auf <a href='https://github.com/mfdz/transit-stops-osm-comparison'>Github</a> verfügbar. 
             Mutmaßliche Fehler oder Verbesserungsvorschläge zum Abgleich-Verfahren können dort gemeldet bzw. 
             (noch besser) per Pull-Request vorgeschlagen werden. Systematische Fehler des zHV-Datensatzes 
             tragen wir im GitHub-Repository <a href='https://github.com/mfdz/zhv-issues/issues'>zhv-issues</a> zusammen.</p>
 
-            <p>Die verschiedenen Abgleich-Status und mögliche Ursache sowie Behebungs-Optionen beschreiben wir in dieser <a href='https://github.com/mfdz/nvbw-osm-stop-comparison/blob/master/docs/faq.md'>FAQ</a>.
+            <p>Die verschiedenen Abgleich-Status und mögliche Ursache sowie Behebungs-Optionen beschreiben wir in dieser <a href='https://github.com/mfdz/transit-stops-osm-comparison/blob/master/docs/faq.de.md'>FAQ</a>.
             """)
         rep.add_title("Versionen", level=2)
         rep.add_html(self.version_fragment(metadata))

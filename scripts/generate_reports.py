@@ -157,7 +157,7 @@ class StopsPerDistricLister():
                     <li>Abgleich: {match_date}</li>
                  </ul>
 
-                 <p>Nähere Erläuterungen zu den Abgleich-Status finden sie in den <a href='https://github.com/mfdz/nvbw-osm-stop-comparison/blob/master/docs/faq.md'>FAQs</a></p>
+                 <p>Nähere Erläuterungen zu den Abgleich-Status finden sie in den <a href='https://github.com/mfdz/transit-stops-osm-comparison/blob/main/docs/faq.de.md'>FAQs</a></p>
                     '''.format(
                             osm_date=self.fromtimestampstr(metadata['osm_timestamp']),
                             gtfs_date=self.fromtimestampstr(metadata['gtfs_timestamp']),

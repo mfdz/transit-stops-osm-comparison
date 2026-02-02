@@ -19,33 +19,8 @@
       {% for type_resource, url in styles.items() %}
         <link rel="{{ type_resource }}" href="{{ url }}">
       {% endfor %}
-        <style>
-            table {
-              font-family: Arial, Helvetica, sans-serif;
-              border-collapse: collapse;
-              width: 100%;
-            }
-
-            table, th, td {
-                border: 1px solid #ddd;
-                font-size: 8pt;
-                padding: 2px;
-            }
-            tr:nth-child(even){background-color: #f2f2f2;}
-
-            tr:hover {background-color: #ddd;}
-
-            .NO_MATCH {background-color: #f00;}
-            .MATCHED {background-color: #4daf4a;}
-            .MATCHED_THOUGH_NAMES_DIFFER {background-color: #00e; color:#fff}
-            .MATCHED_THOUGH_DISTANT {background-color: #ffff33; }
-            .MATCHED_THOUGH_OSM_NO_NAME {background-color: #a65628; color:#fff} 
-            .MATCHED_AMBIGUOUSLY {background-color: #ff7f00; }
-            .NO_MATCH_BUT_OTHER_PLATFORM_MATCHED {background-color: #f781bf; }
-            .NO_MATCH_AND_SEEMS_UNSERVED {color:#bbaaaa }
-            .MATCHED_THOUGH_REVERSED_DIR {background-color: #5dbebe; }
-        
-        </style>
+        <link rel="stylesheet" href="table-styles.css">
+        <script src="sortable-table.js"></script>
     </head>
     <body>
         {{ body }}

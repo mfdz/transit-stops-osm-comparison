@@ -16,7 +16,7 @@ GTFS_FILE=seeds/$(COUNTRY)/gtfs.zip
 STOPS_FILE=seeds/$(COUNTRY)/zhv.zip
 SQLMESH_DOTENV_PATH=.env_$(COUNTRY)
 
-.PHONY: download, plan-no-backfill, plan-restate, compare, generate-reports
+.PHONY: download, plan-no-backfill, plan-restate, compare, generate-reports, preview-reports
 
 
 # Download German district data for reporting
@@ -37,7 +37,7 @@ download: seeds/de/VG250_KRS.shp
 		echo "Don't update OSM as at least one of GTFS or stops file is older than pbf" ; \
 		false ; \
 	fi
-	
+
 db_$(COUNTRY).db:
 	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply
 
@@ -58,3 +58,24 @@ compare: db_$(COUNTRY).db
 generate-reports:
 	python3 scripts/generate_reports.py
 
+# Preview reports on GitHub Pages (for showcasing new features)
+# Note: This is intended for contributors to demonstrate changes.
+# Uses git worktree to avoid touching the main workspace.
+preview-reports:
+	@if [ ! -d "out/reports" ]; then \
+		echo "Error: out/reports directory not found."; \
+		echo "Run 'make generate-reports' first."; \
+		exit 1; \
+	fi
+	@echo "Creating preview of reports on gh-pages branch..."
+	@TEMP_DIR=$$(mktemp -d) && \
+	git branch -D gh-pages 2>/dev/null || true && \
+	git worktree add --orphan -b gh-pages "$$TEMP_DIR" >/dev/null 2>&1 && \
+	cp -r out/reports/* "$$TEMP_DIR/" && \
+	cd "$$TEMP_DIR" && git add . && git commit -m "Preview reports - $$(date +'%Y-%m-%d %H:%M')" --quiet && \
+	cd - >/dev/null && git worktree remove "$$TEMP_DIR" && \
+	echo "" && \
+	echo "✓ Preview committed to gh-pages branch" && \
+	echo "" && \
+	echo "To publish preview, run:" && \
+	echo "  git push -f origin gh-pages"

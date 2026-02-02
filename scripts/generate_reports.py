@@ -4,7 +4,7 @@ import duckdb
 import pandas as pd
 import argparse
 import json
-from pathlib import Path 
+from pathlib import Path
 from html_reports import Report
 
 logger = logging.getLogger('StopsPerDistricLister')
@@ -30,8 +30,8 @@ class StopsPerDistricLister():
         """
 
     STOPS_PER_REGION = """
-        SELECT locality "Ortsteil", stop_name_without_locality "Haltestelle", h.stop_id "globaleID", h.latitude lat, h.longitude lon, h.mode, h.match_state, o.osm_id, 
-          round(h.distance,1) distance, round(h.rating,2) rating, 
+        SELECT locality "Ortsteil", stop_name_without_locality "Haltestelle", h.stop_id "globaleID", h.latitude lat, h.longitude lon, h.mode, h.match_state, o.osm_id,
+          round(h.distance,1) distance, round(h.rating,2) rating,
           o.name "osm_name", routes, official_direction, osm_direction,
           CASE WHEN o.osm_id IS NULL THEN 'POINT('||h.longitude||' '||h.latitude||')' ELSE 'LINESTRING('||h.longitude||' '||h.latitude||','||o.lon||' '||o.lat||')' END WKT
         FROM result.matches h
@@ -51,7 +51,7 @@ class StopsPerDistricLister():
     def _rows(self, sql, params = []):
         cur = self.db.execute(sql, params)
         columns = [desc[0] for desc in cur.description]
-            
+
         while True:
             rows = cur.fetchall()
             if len(rows) == 0:
@@ -63,7 +63,7 @@ class StopsPerDistricLister():
     def as_html_table(self, headers, rows_as_html):
         """ Adds the list of dicts as table """
         table_html = """
-            <table>
+            <table class="sortable">
                 <thead>
                     {header_cols}
                 </thead>
@@ -80,7 +80,7 @@ class StopsPerDistricLister():
             rows_html += '<tr>'
             rows_html += row
             rows_html += '</tr>'
-      
+
         return table_html.format(header_cols=header_cols, rows_html=rows_html)
 
     def render_overview(self, outdir, metadata):
@@ -90,8 +90,10 @@ class StopsPerDistricLister():
         districts = pd.DataFrame.from_dict(self.districts, orient='index')
         df = df.join(districts)
         df.reset_index(inplace=True)
-        table_html = df.to_html( escape=False, 
-            columns= ['region', 'GEN', 'MATCHED', 
+        table_html = df.to_html( escape=False,
+            classes='sortable',
+            index=False,
+            columns= ['region', 'GEN', 'MATCHED',
                       'MATCHED_AMBIGUOUSLY',
                       'MATCHED_THOUGH_DISTANT',
                       'MATCHED_THOUGH_NAMES_DIFFER',
@@ -106,21 +108,21 @@ class StopsPerDistricLister():
 
         rep.add_title("DELFI-Haltestellen-OSM-Vergleich")
         rep.add_html("""
-            <p>Die nachfolgenden Tabelle listet das kreisweise Ergebnis eines Abgleichs des 
+            <p>Die nachfolgenden Tabelle listet das kreisweise Ergebnis eines Abgleichs des
             zentralen Haltestellen-Verzeichnisses (zHV) des DELFI e.V. mit den Haltestellen-Informationen
             aus OpenStreetMap.</p>
 
             <p>Diese Auswertung wird in der Regel wöchentlich nach Veröffentlichung aktueller DELFI zHV und GTFS-Daten aktualisiert.</p>
 
-            <p>Beachten Sie, dass weder die offiziellen Daten, noch die OpenStreetMap-Daten, noch das von uns 
+            <p>Beachten Sie, dass weder die offiziellen Daten, noch die OpenStreetMap-Daten, noch das von uns
             durchgeführte Matching fehlerfrei sind. Gelistet werden hier nur die von uns ermittelten Inkosistenzen.
             Welche Information korrekt ist, oder ob vielleicht die Zuordnung fehlerhaft ist, muss in jedem
             Einzelfall geprüft werden. Alle Angaben ohne Gewähr.</p>
 
-            <p>Details zum Vorgehen beschreibt dieser <a href='https://www.mfdz.de/blog/haltestellendaten-bw-vergleich-osm-nvbw'>Blog-Beitrag</a>, 
-            der Code ist auf <a href='https://github.com/mfdz/transit-stops-osm-comparison'>Github</a> verfügbar. 
-            Mutmaßliche Fehler oder Verbesserungsvorschläge zum Abgleich-Verfahren können dort gemeldet bzw. 
-            (noch besser) per Pull-Request vorgeschlagen werden. Systematische Fehler des zHV-Datensatzes 
+            <p>Details zum Vorgehen beschreibt dieser <a href='https://www.mfdz.de/blog/haltestellendaten-bw-vergleich-osm-nvbw'>Blog-Beitrag</a>,
+            der Code ist auf <a href='https://github.com/mfdz/transit-stops-osm-comparison'>Github</a> verfügbar.
+            Mutmaßliche Fehler oder Verbesserungsvorschläge zum Abgleich-Verfahren können dort gemeldet bzw.
+            (noch besser) per Pull-Request vorgeschlagen werden. Systematische Fehler des zHV-Datensatzes
             tragen wir im GitHub-Repository <a href='https://github.com/mfdz/zhv-issues/issues'>zhv-issues</a> zusammen.</p>
 
             <p>Die verschiedenen Abgleich-Status und mögliche Ursache sowie Behebungs-Optionen beschreiben wir in dieser <a href='https://github.com/mfdz/transit-stops-osm-comparison/blob/master/docs/faq.de.md'>FAQ</a>.
@@ -196,13 +198,13 @@ class StopsPerDistricLister():
                 if last_city != '' or last_station != '':
                     self.render_stops_of_station(rows_html, rows_per_station, last_city, last_station)
                     rows_per_station=[]
-            
+
                 last_city = stop['Ortsteil']
                 last_station = stop['Haltestelle']
-                
+
             stop['osm_link'] = self.osm_match_link(stop['osm_id'])
             stop['lat_lon_link'] = self.lat_lon_link(stop['lat'], stop['lon'])
-            
+
             stop_html = """<td>{osm_name}</td>
             <td>{globaleID}</td>
             <td>{lat_lon_link}</td>
@@ -223,19 +225,20 @@ class StopsPerDistricLister():
         table_html = self.as_html_table(headers, rows_html)
 
         rep = Report()
-        district = self.districts.get(region)    
-        rep.add_title("Haltestellenabgleich DELFI - OSM Landkreis {ags} - {district}".format(ags=region[3:], 
+        district = self.districts.get(region)
+        rep.add_title("Haltestellenabgleich DELFI - OSM Landkreis {ags} - {district}".format(ags=region[3:],
                             district=district['GEN'] if district else 'Unbekannt'))
 
         rep.add_title("Versionen", level=2)
         rep.add_html(self.version_fragment(metadata))
         rep.add_html('<p>Alternative Ansicht: <a href="region_'+region.replace(':','')+'.csv">CSV</a>')
+        rep.add_html('<p><small><em>Hinweis: Durch Klick auf eine Spaltenüberschrift lässt sich die Tabelle sortieren. Beim ersten Sortieren wird die Gruppierung zusammengehöriger Haltepunkte aufgelöst, damit alle Zeilen korrekt sortiert werden können.</em></small></p>')
         rep.add_html(table_html)
 
         filename = outdir+'/region_{region}.html'.format(region=region.replace(':',''))
         rep.write_report(template_path=REGIONS_TEMPLATE, filename=filename, prettify=False)
         print("Wrote", region[3:])
-        
+
     def load_districts(self):
         self.districts = {r['district']: r for r in self._rows(self.DISTRICTS_QUERY)}
 
@@ -250,10 +253,19 @@ class StopsPerDistricLister():
         metadata = self.load_metadata()
         self.load_districts()
         Path(outdir).mkdir(parents=True, exist_ok=True)
+
+        # Copy JavaScript and CSS files to output directory
+        import shutil
+        templates_dir = Path(__file__).parent.parent / 'templates'
+        js_source = templates_dir / 'sortable-table.js'
+        css_source = templates_dir / 'table-styles.css'
+        shutil.copy(js_source, Path(outdir) / 'sortable-table.js')
+        shutil.copy(css_source, Path(outdir) / 'table-styles.css')
+
         self.render_overview(outdir, metadata)
-        for district in self.districts:    
-            self.render_region(district, outdir, metadata)   
-        
+        for district in self.districts:
+            self.render_region(district, outdir, metadata)
+
 def dict_factory(cursor, row):
      col_names = [col[0] for col in cursor.description]
      return {key: value for key, value in zip(col_names, row)}
@@ -266,7 +278,7 @@ def main(database_path, outdir):
     db = open_duckdb_db(database_path)
     renderer = StopsPerDistricLister(db)
     renderer.render(outdir)
-    
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', dest='db', required=False, help='Database file', default='db_de.db')

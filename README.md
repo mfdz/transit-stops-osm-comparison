@@ -12,6 +12,12 @@ This project is bases on Tobiko Data's [SQLMesh](https://sqlmesh.readthedocs.io/
 
 For updating the OSM pbf file after the initial download, this project uses a dockerized version of pyosmium. So needs to be installed, also.
 
+After cloning the repository, run the setup command to install dependencies and configure DuckDB:
+
+```sh
+$ make setup
+```
+
 ## Comparing DELFI zHV data against OSM
 To compare the German DELFI zHV dataset against OSM, you'll need to download the zHV dataset, the DELFI GTFS dataset (which we use to derive preceding and subsequent stops and route types served at a stop) as well as the OSM dataset germany-latest.pbf from Geofabrik. Finally, a dataset providing names and codes of German districts needs to be downloaded from BKG as well.
 

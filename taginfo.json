@@ -1,0 +1,207 @@
+{
+  "data_format": 1,
+  "data_updated": "20261010T142500Z",
+  "project": {
+    "name": "transit-stops-osm-comparison",
+    "description": "This project compares official transit stop data against OSM data and highlights differences between them",
+    "project_url": "http://github.com/mfdz/transit-stops-osm-comparison",
+    "contact_name": "Holger Bruch",
+    "contact_email": "hb@mfdz.de"
+  },
+  "tags": [
+    {
+      "key": "name",
+      "description": "Used to rate the stop's similarity via bigram matching"
+    },
+    {
+      "key": "public_transport",
+      "value": "stop_point",
+      "object_types": [
+        "node"
+      ],
+      "description": "For rail-ish modes (rail, tram, light_rail), the OSM stop_point is used to match it to the official stops."
+    },
+    {
+      "key": "public_transport",
+      "value": "platform",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "For non-rail-ish modes (bus, ferry), the OSM plattform (or highway=bus_stop or amenity=ferry_terminal) is used to match it to the official stops."
+    },
+    {
+      "key": "public_transport",
+      "value": "station",
+      "object_types": [
+        "node"
+      ],
+      "description": "The OSM station is used as fallback match for official stops, if no other matching stops exist."
+    },
+    {
+      "key": "highway",
+      "value": "bus_stop",
+      "object_types": [
+        "node"
+      ],
+      "description": "For non-rail-ish modes (bus, ferry), the OSM plattform (or highway=bus_stop or amenity=ferry_terminal) is used to match it to the official stops."
+    },
+    {
+      "key": "railway",
+      "object_types": [
+        "node"
+      ],
+      "value": "stop",
+      "description": "Nodes with `railway=stop` are considered as potential matches for official stops serving rail-ish modes like tram, rail, light_rail."
+    },
+    {
+      "key": "railway",
+      "object_types": [
+        "node"
+      ],
+      "value": "tram_stop",
+      "description": "Nodes with `railway=tram_stop` are considered as potential matches for official stops serving rail-ish modes like i.e. tram, light_rail."
+    },
+    {
+      "key": "railway",
+      "object_types": [
+        "node"
+      ],
+      "value": "halt",
+      "description": "Nodes with `railway=halt` are considered as fallback matches for official stops serving rail-ish modes like i.e. tram, light_rail, in case there exists no better matching stop/tram_stop/stop_point."
+    },
+    {
+      "key": "operator",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "Information simply passed through, not used for matching"
+    },
+    {
+      "key": "network",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "Information passed through, not used for matching"
+    },
+    {
+      "key": "ref:IFOPT",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "Especially for German and some other European countries stops, ref:IFOPT specifies to official stop ID."
+    },
+    {
+      "key": "ref:pt_id",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "About one thousand OSM stops use `ref:pt_id` instead of `ref:IFOPT`, mainly in some regions of Germany (`de:05*` and Austria. `at:49:*`). Note that we'd recommend to use ref:IFOPT instead."
+    },
+    {
+      "key": "ref",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "ref is often stil used to map the local platform code, though local_ref should be used. If it's length is smaller than 3 characters, wie assume it denotes the plattform code and use it to boost matches, if it matches the official platform code."
+    },
+    {
+      "key": "local_ref",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "Used to boost matches, if local_ref matches the official platform code."
+    },
+    {
+      "key": "amenity",
+      "value": "ferry_terminal",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "Official stops serving routes with route_type 4  (or corresponding extended route_types) are matched against OSM features with `amenity=ferry_terminal` OSM stops (`public_transport=platform`) with `ferry=yes`"
+    },
+    {
+      "key": "route_ref",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "route_ref is currently only used for documentary purposes, as it is PTv1 and mostly has been replaced by route relations"
+    },
+    {
+      "key": "kerb:approach_aid",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "OMS stops having a `kerb:approach_aid=yes` are classified as `wheelchair_accessible` in GTFS-sense. However, as the German DELFI-zHV-registry currently does not provide accessiblity information, we don't compare against this yet."
+    },
+    {
+      "key": "tactile_paving",
+      "object_types": [
+        "node",
+        "way",
+        "area"
+      ],
+      "description": "Information passed through"
+    },
+    {
+      "key": "wheelchair",
+      "description": "OMS stops having a `wheelchair=yes` are classified as `wheelchair_accessible` in GTFS-sense. However, as the German DELFI-zHV-registry currently does not provide accessiblity information, we don't compare against this yet."
+    },
+    {
+      "key": "bus",
+      "value": "yes",
+      "description": "Official stops serving routes with route_type 3 (or corresponding extended route_types) are matched against OSM stops with ` bus=yes` or other non-'rail-ish' stops"
+    },
+    {
+      "key": "train",
+      "value": "yes",
+      "description": "Official stops serving routes with route_type 2 (or corresponding extended route_types) are matched against OSM stops with ` train=yes` or other 'rail-ish' stops"
+    },
+    {
+      "key": "light_rail",
+      "value": "yes",
+      "description": "Official stops serving routes with route_type 1 (or corresponding extended route_types) are matched against OSM stops with light_rail=yes or other 'rail-ish' stops"
+    },
+    {
+      "key": "tram",
+      "value": "yes",
+      "description": "Official stops serving routes with route_type 0 (or corresponding extended route_types) are matched against OSM stops with tram=yes (or railway=tram_stop)"
+    },
+    {
+      "key": "ferry",
+      "value": "yes",
+      "description": "Official stops serving routes with route_type 4 (or corresponding extended route_types) are matched against OSM stops with ferry=yes"
+    },
+    {
+      "key": "funicular",
+      "value": "yes",
+      "description": "Official stops serving routes with route_type 7 (or corresponding extended route_types) are matched against OSM stops with funicular=yes"
+    },
+    {
+      "key": "route",
+      "object_types": [
+        "relation"
+      ],
+      "description": "We use `light_rail`, `bus`, `ferry`, `tram`, `train`. relations to deduce stop order. Names of preceding and subsequent stops are used evaluated to detect direction issues."
+    }
+  ]
+}

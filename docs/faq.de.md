@@ -119,19 +119,22 @@ Mögliche Ursachen können sein:
 2. Falls der Halt tatsächlich vor Ort oder per Luftbild als Halt erkennbar ist, sollte er erfasst werden. Virtuelle oder sehr kurzzeitige, temporäre Halte sollten aus unserer Sicht nicht in OSM erfasst werden. Es wäre sehr wünschenswert, dass dieser Haltestellen-Typ im zHV explizit ausgewiesen wird (siehe https://github.com/mfdz/zhv-issues/issues/15).
 
 ### NO_MATCH_AND_SEEMS_UNSERVED
+
 #### Bedeutung
-Der offizielle Halt konnte, obwohl er laut Haltestellenverzeichnis bedient wird oder der Bedienstatus unbekannt ist, keinem OSM-Stop zugeordnet werden. Allerdings existieren auch im entsprechenden GTFS-Feed keine Fahrten, die diesen Halt bedienen.
+Der offizielle Halt konnte keinem OSM-Stop zugeordnet werden. Allerdings existieren auch im entsprechenden GTFS-Feed keine Fahrten, die diesen Halt bedienen.
+Wir weisen diese dennoch explizit aus, da das zHV derzeit leider keine zweifelsfreien steigscharfen Informationen zum Status eines Steiges umfasst (siehe https://github.com/mfdz/zhv-issues/issues/23 und https://github.com/mfdz/zhv-issues/issues/25).
+
 
 #### Mögliche Ursachen
 Mögliche Ursachen können sein:
 
-1. Der Halt wird zwar (noch) mit Condition "Served" oder "Unknown" im zHV geführt, ist jedoch vor Ort bereits abgebaut, oder noch nicht gebaut. Dies lässt sich derzeit leider aufgrund von unzuverlässigen Angaben für die Eigenschaften "Condition" und "State" im zHV nicht erkennen (siehe z.B. https://github.com/mfdz/zhv-issues/issues/1).
+1. Der Halt wird tatsächlich nicht mehr oder noch nicht bedient.
 2. Im GTFS fehlen viele Schulbus-Linien, Fährverbindungen,  Ruf- oder Bürgerbusse im GTFS-Feed, so dass dieser Halt bedient sein kann, jedoch in OSM noch nicht erfasst ist (siehe z.B. https://github.com/mfdz/GTFS-Issues/issues/106).
 
 #### Was ist zu tun?
 Je nach obiger Ursache wären mögliche Problemlösungen:
 
-1. Falls der Halt nicht bedient wird, sollte Status im zHV aktualisiert werden.
+1. Das zHV könnte theoretisch um diese Information ergänzt werden. Dies ist derzeit jedoch leider nicht vorgesehen.
 2. Handelt es sich um einen bedienten Halt, sollten die bedienenden Linien auch im GTFS geführt werden. Flexiblere Bedienformen wie z.B. Ruf- und Bürgerbusse können bei Bedarf mit gebräuchlichen Erweiterungen wie GTFS-Flex umfassender beschrieben werden.
 
 ### NO_MATCH_BUT_OTHER_PLATFORM_MATCHED

@@ -16,7 +16,7 @@ GTFS_FILE=seeds/$(COUNTRY)/gtfs.zip
 STOPS_FILE=seeds/$(COUNTRY)/zhv.zip
 SQLMESH_DOTENV_PATH=.env_$(COUNTRY)
 
-.PHONY: download, plan-no-backfill, plan-restate, compare, generate-reports, preview-reports
+.PHONY: download, plan-no-backfill, plan-restate, compare, generate-reports, preview-reports, setup
 
 
 # Download German district data for reporting
@@ -38,7 +38,19 @@ download: seeds/de/VG250_KRS.shp
 		false ; \
 	fi
 
+setup:
+	@echo "Installing Python dependencies..."
+	@pip install -q -r requirements.txt
+	@echo "✓ Setup complete"
+	@echo ""
+	@echo "Next steps:"
+	@echo "  1. Run 'make download' to fetch data"
+	@echo "  2. Run 'make compare' to create database and perform matching"
+
 db_$(COUNTRY).db:
+	@echo "Initializing DuckDB with spatial extension..."
+	@python3 scripts/setup_duckdb.py db_$(COUNTRY).db
+	@echo "Running SQLMesh plan..."
 	SQLMESH_DOTENV_PATH=.env_$(COUNTRY) sqlmesh plan --auto-apply
 
 plan-no-backfill:

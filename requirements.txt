@@ -1,3 +1,4 @@
 sqlmesh~=0.228.1
 scipy~=1.16.3
 html-reports==0.1.0
+duckdb>=1.0.0
